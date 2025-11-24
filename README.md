@@ -15,19 +15,51 @@ DORO-LMS는 학생, 강사, 관리자 역할별로 강의, 공지사항, 진단 
 
 ## 📁 폴더 구조
 
-DORO-LMS/
-├── DBProject/
-│ ├── settings.py
-│ └── urls.py
-├── user/
-├── board/
-├── course/
-├── manage.py
-├── templates/
-├── static/
-├── requirements.txt
-├── .gitignore
-└── README.md
+DORO-LMS/                      # 프로젝트 루트
+│
+├── DBProject/                 # Django 메인 설정
+│   ├── settings.py            # 데이터베이스, 앱, 미들웨어 설정
+│   ├── urls.py                # 메인 URL 라우팅
+│   ├── wsgi.py                # 배포용 WSGI 설정
+│   └── asgi.py                # 비동기 처리용 ASGI 설정
+│
+├── user/                      # 사용자 관리 앱
+│   ├── models.py              # User, DIMC 모델
+│   ├── views.py               # 회원가입, 로그인, 마이페이지
+│   ├── forms.py               # 회원가입, 정보수정 폼
+│   ├── admin.py               # 관리자 페이지 커스터마이징
+│   └── urls.py                # /user/* 경로 설정
+│
+├── board/                     # 공지사항 앱
+│   ├── models.py              # Notice 모델
+│   ├── views.py               # 공지 CRUD
+│   ├── forms.py               # 공지사항 작성 폼
+│   └── urls.py                # /board/notice/* 경로
+│
+├── course/                    # 강의 관리 앱
+│   ├── models.py              # Course 모델
+│   ├── views.py               # 강의 CRUD
+│   ├── forms.py               # 강의 등록 폼
+│   └── urls.py                # /course/* 경로
+│
+├── templates/                 # HTML 템플릿 파일
+│   ├── base.html              # 전체 레이아웃 (헤더/푸터)
+│   ├── index.html             # 메인 페이지
+│   ├── user/                  # 사용자 관련 템플릿
+│   ├── board/                 # 공지사항 템플릿
+│   └── course/                # 강의 템플릿
+│
+├── static/                    # 정적 파일
+│   ├── css/                   # 스타일시트
+│   ├── js/                    # JavaScript 파일
+│   └── images/                # 이미지 파일
+│
+├── manage.py                  # Django 관리 스크립트
+├── requirements.txt           # pip 패키지 목록
+├── .gitignore                 # Git 추적 제외 목록
+├── .env                       # 환경변수 (SECRET_KEY, DB 정보)
+└── README.md                  # 프로젝트 문서
+
 
 ## 🚀 설치 및 실행
 
