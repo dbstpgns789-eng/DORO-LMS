@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     "courses", # 강의, 강의평가 등
     "core",
     "channels",
-    "chat"
+    "chat",
+    "course",
+    "board",
 ]
 
 MIDDLEWARE = [
@@ -89,9 +91,9 @@ CHANNEL_LAYERS = {
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": 'test_postgres',
-        "USER": 'root',
-        "PASSWORD": 'password',
+        "NAME": 'mydb',
+        "USER": 'postgres',
+        "PASSWORD": '1234',
         "HOST": 'localhost',
         "PORT": '5432',
     }
@@ -147,3 +149,29 @@ LOGIN_URL = 'user:login'
 LOGIN_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# 이메일 발송 설정 (Gmail 예시)
+DEBUG = True
+
+
+
+
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'semiexpansible-lawana-statolithic.ngrok-free.dev',  # 👈 ngrok 도메인 추가
+
+]
+SITE_DOMAIN = 'semiexpansible-lawana-statolithic.ngrok-free.dev'
+
+CSRF_TRUSTED_ORIGINS = ['https://semiexpansible-lawana-statolithic.ngrok-free.dev']
+# CSRF 보안 설정
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ohjun2001@gmail.com'
+EMAIL_HOST_PASSWORD = 'fjmrusxuyugwwqna'  # Gmail 앱 비밀번호
+DEFAULT_FROM_EMAIL = 'ohjun2001@gmail.com'

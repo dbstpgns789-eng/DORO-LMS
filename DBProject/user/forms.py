@@ -100,3 +100,8 @@ class DIMCForm(forms.ModelForm):
             'pdf_path': forms.ClearableFileInput(attrs={'placeholder': 'PDF 파일 경로를 입력하세요'}),
         }
 
+
+
+
+
+

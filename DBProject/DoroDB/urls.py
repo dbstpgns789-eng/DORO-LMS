@@ -31,6 +31,8 @@ urlpatterns = [
     # user/로 시작하는 모든 url은 user.urls에서 처리
     path('user/', include('user.urls')),
     path('chat/', include('chat.urls')),
+    path('board/', include('board.urls')),
+    path('course/', include('course.urls')),
 
 ]
 

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+import uuid
 
 # 역할 자동 부여를 위한 인증 코드
 instructor_code = "ISNTRUCTOR_00"
@@ -25,29 +26,27 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        # username 대신 email만으로 슈퍼유저 생성
         return self.create_user(email, password, **extra_fields)
 
 class User(AbstractUser):
-    # AbstractUser의 기본 username 필드를 사용하지 않음
     username = None
-
     name = models.CharField(max_length=30, verbose_name="이름", null=False, blank=False)
     email = models.EmailField(max_length=50, verbose_name="아이디(이메일)", unique=True, null=False, blank=False)
-
     role_choices = (('student', '학생'), ('instructor', '강사'), ('manager', '매니저'))
     role = models.CharField(max_length=10, choices=role_choices, default='student', verbose_name='역할')
-
     phone_number = models.CharField(max_length=15, verbose_name="전화번호", unique=True,
-                                    default='010-0000-0000', null=False, blank=True)
+                                   default='010-0000-0000', null=False, blank=True)
     address = models.CharField(max_length=100, verbose_name="주소", null=True, blank=True)
-    birthday = models.DateTimeField(null=False, blank=True, verbose_name="생년월일")
+    birthday = models.DateTimeField(null=True, blank=True, verbose_name="생년월일")
     profile_image = models.ImageField(upload_to='profile_pics/', null=True, blank=True, verbose_name="프로필 사진")
     code = models.CharField(max_length=15, verbose_name="기관 인증코드", null=True, blank=True)
 
+    # 👇 [추가] 이메일 인증 관련 필드
+    email_verified = models.BooleanField(default=False, verbose_name="이메일 인증 여부")
+    email_verification_token = models.UUIDField(default=uuid.uuid4, verbose_name="이메일 인증 토큰")
+
     objects = CustomUserManager()
 
-    # 로그인 필드와 필수 필드 지정
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
 
@@ -59,13 +58,12 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
-    def save(self, *args, **kwargs):  # 역할 부여
+    def save(self, *args, **kwargs):
         if self.pk is None and self.code:
             if self.code == instructor_code:
                 self.role = "instructor"
             elif self.code == manager_code:
                 self.role = "manager"
-
         super().save(*args, **kwargs)
 
 
@@ -89,4 +87,8 @@ class DIMC(models.Model):
 
     def __str__(self):
         return f"DIMC Test {self.test_id} - {self.student.name}"
+
+
+
+
 
