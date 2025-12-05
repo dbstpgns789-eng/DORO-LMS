@@ -1,8 +1,39 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}마이페이지{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/mypage.css' %}?v=20251128_2">
+
+<style>
+  /* 이 페이지에서 사이드바 3개 메뉴 위치 강제 */
+  #menuItem1,
+  #menuItem2,
+  #menuItem3{
+    position:absolute;
+    left:238px;
+    font-size:20px;
+    color:#000;
+    white-space:nowrap;
+    text-decoration:none;
+  }
+  #menuItem1{ top:calc(var(--content-top, 0px) + 343px); }
+  #menuItem2{ top:calc(var(--content-top, 0px) + 399px); }
+  #menuItem3{ top:calc(var(--content-top, 0px) + 455px); }
+
+  /* 우측 카드 기본 폭/위치만 보정 (나머지는 mypage.css 그대로 사용) */
+  #infoBox{
+    position:absolute;
+    left:490px;
+    top:calc(var(--content-top, 0px) + 321px);
+    width:685px;
+    height:500px;
+    background:#fff;
+    border:1px solid #CBC6C6;
+    border-radius:10px;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -17,6 +48,7 @@
   <div id="menuLine2"></div>
   <a id="menuItem1" href="{% url 'user:mypage' %}">내 정보</a>
   <a id="menuItem2" href="{% url 'user:DIMC_archive' %}">DIMC 아카이브</a>
+  <a id="menuItem3" href="{% url 'user:dimc_results' %}">DIMC 업로드 내역</a>
 
   <!-- 우측 카드 -->
   <div id="infoBox">

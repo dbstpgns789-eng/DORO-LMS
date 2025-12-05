@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ course.title }} | 내 강의실{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-inner">
+    <h1 class="hero-title">{{ course.title }}</h1>
+    <p class="hero-sub">강사: {{ course.instructor.name }}</p>
+  </div>
+</section>
+
+<main class="card-wrap">
+  <div class="card-inner">
+    
+    <!-- 강의 정보 -->
+    <section style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div>
+          <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">내 학습 현황</h2>
+          <div style="display: flex; gap: 20px; font-size: 14px; color: #6c757d;">
+            <span>📅 수강 시작: {{ enrollment.enrolled_at|date:"Y-m-d" }}</span>
+            <span>📊 진도율: {{ enrollment.progress }}%</span>
+          </div>
+        </div>
+        
+        {% if request.user == course.instructor or request.user.role == "manager" %}
+        <a href="{% url 'classroom:assignment_create' course.course_id %}" style="padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; font-weight: 500;">
+          ➕ 과제 등록
+        </a>
+        {% endif %}
+      </div>
+      
+      <div style="width: 100%; height: 15px; background-color: #e9ecef; border-radius: 8px; overflow: hidden;">
+        <div style="width: {{ enrollment.progress }}%; height: 100%; background-color: #28a745;"></div>
+      </div>
+    </section>
+    
+    <!-- 과제 목록 -->
+    <section>
+      <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 20px;">
+        📝 과제 목록 ({{ assignments.count }})
+      </h2>
+      
+      {% if assignments %}
+      <div style="display: flex; flex-direction: column; gap: 15px;">
+        {% for assignment in assignments %}
+        <div style="border: 1px solid {% if assignment.assignment_id in submitted_ids %}#28a745{% elif assignment.is_overdue %}#dc3545{% else %}#ffc107{% endif %}; border-radius: 8px; padding: 20px; background-color: #fff;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+              <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">
+                <a href="{% url 'classroom:assignment_detail' assignment.assignment_id %}" style="text-decoration: none; color: #212529;">
+                  {{ assignment.title }}
+                </a>
+              </h3>
+              
+              <p style="color: #6c757d; font-size: 14px; margin-bottom: 15px;">
+                {{ assignment.description|truncatewords:20 }}
+              </p>
+              
+              <div style="display: flex; gap: 20px; font-size: 14px; color: #6c757d;">
+                <span>📅 마감: {{ assignment.due_date|date:"Y-m-d H:i" }}</span>
+                <span>💯 배점: {{ assignment.max_score }}점</span>
+                {% if assignment.is_overdue %}
+                <span style="color: #dc3545; font-weight: 600;">⏰ 마감 지남</span>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div style="text-align: right;">
+              {% if assignment.assignment_id in submitted_ids %}
+              <span style="display: inline-block; padding: 8px 16px; background-color: #28a745; color: white; border-radius: 5px; font-size: 14px; font-weight: 500;">
+                ✅ 제출 완료
+              </span>
+              {% else %}
+              <a href="{% url 'classroom:submit_assignment' assignment.assignment_id %}" style="display: inline-block; padding: 8px 16px; background-color: #0d6efd; color: white; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: 500;">
+                📤 제출하기
+              </a>
+              {% endif %}
+              
+              {% if request.user == course.instructor or request.user.role == "manager" %}
+              <div style="margin-top: 10px; display: flex; gap: 5px; justify-content: flex-end;">
+                <a href="{% url 'classroom:submission_list' assignment.assignment_id %}" style="padding: 6px 12px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px; font-size: 12px;">
+                  제출 목록
+                </a>
+                <a href="{% url 'classroom:assignment_update' assignment.assignment_id %}" style="padding: 6px 12px; background-color: #0d6efd; color: white; text-decoration: none; border-radius: 5px; font-size: 12px;">
+                  수정
+                </a>
+                <a href="{% url 'classroom:assignment_delete' assignment.assignment_id %}" style="padding: 6px 12px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 5px; font-size: 12px;">
+                  삭제
+                </a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div style="padding: 60px; text-align: center; background-color: #f8f9fa; border-radius: 8px;">
+        <p style="font-size: 18px; color: #6c757d;">등록된 과제가 없습니다.</p>
+      </div>
+      {% endif %}
+    </section>
+    
+    <!-- 하단 버튼 -->
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6;">
+      <a href="{% url 'classroom:my_classroom' %}" style="display: inline-block; padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px;">
+        ← 내 강의실로
+      </a>
+    </div>
+    
+  </div>
+</main>
+{% endblock %}

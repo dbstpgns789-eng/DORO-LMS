@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}캘린더 | 내 강의실{% endblock %}
+
+{% block extra_css %}
+<style>
+  body {
+    background-color: #f5f5f5;
+  }
+
+  .classroom-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .classroom-container {
+    display: flex;
+    gap: 20px;
+  }
+
+  /* 👇 대시보드와 동일한 사이드바 */
+  .sidebar {
+    width: 250px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0;
+    height: fit-content;
+  }
+
+  .sidebar-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 25px 20px;
+    border-bottom: 2px solid #4650D5;
+    background-color: #f8f9fa;
+  }
+
+  .sidebar-header .avatar {
+    width: 60px;
+    height: 60px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+  }
+
+  .sidebar-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .user-role {
+    font-size: 12px;
+    color: #666;
+    background-color: #e3f2fd;
+    padding: 4px 12px;
+    border-radius: 12px;
+  }
+
+  .sidebar-menu {
+    list-style: none;
+    padding: 15px;
+    margin: 0;
+  }
+
+  .sidebar-menu li {
+    margin-bottom: 5px;
+  }
+
+  .sidebar-menu a {
+    display: block;
+    padding: 12px 15px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.2s;
+    font-size: 14px;
+  }
+
+  .sidebar-menu a:hover {
+    background-color: #f0f0f0;
+  }
+
+  .sidebar-menu a.active {
+    background-color: #4650D5;
+    color: white;
+    font-weight: 600;
+  }
+
+  /* 내 강의 섹션 */
+  .my-courses-section {
+    padding: 15px;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .course-item {
+    display: block;
+    padding: 10px;
+    margin: 5px 0;
+    color: #333;
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 5px;
+    transition: all 0.2s;
+  }
+
+  .course-item:hover {
+    background-color: #f0f0f0;
+  }
+
+  .empty-courses {
+    padding: 10px;
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+  }
+
+  /* 메인 콘텐츠 */
+  .main-content {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 30px;
+  }
+
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .calendar-title {
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .calendar-nav {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .btn-nav {
+    padding: 8px 15px;
+    background-color: #4650D5;
+    border: 1px solid #4650D5;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .btn-nav:hover {
+    background-color: #3640C5;
+  }
+
+  .current-month {
+    font-size: 18px;
+    font-weight: 600;
+    color: #4650D5;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+  }
+
+  .calendar-day-header {
+    background-color: #FF69B4;
+    padding: 12px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+  }
+
+  .calendar-day {
+    background-color: white;
+    min-height: 120px;
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .calendar-day.other-month {
+    background-color: #fafafa;
+    color: #ccc;
+  }
+
+  .calendar-day-number {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  .calendar-day.other-month .calendar-day-number {
+    color: #ccc;
+  }
+
+  .calendar-event {
+    font-size: 11px;
+    padding: 4px 6px;
+    border-radius: 3px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .calendar-event:hover {
+    opacity: 0.8;
+    transform: translateX(2px);
+  }
+
+  .event-programming {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border-left: 3px solid #2196F3;
+  }
+
+  .event-design {
+    background-color: #fce4ec;
+    color: #c2185b;
+    border-left: 3px solid #e91e63;
+  }
+
+  .event-business {
+    background-color: #fff3e0;
+    color: #e65100;
+    border-left: 3px solid #ff9800;
+  }
+
+  .event-language {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+    border-left: 3px solid #9c27b0;
+  }
+
+  .event-general {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 3px solid #4caf50;
+  }
+
+  .event-assignment {
+    background-color: #fff3e0;
+    color: #e65100;
+    border-left: 3px solid #ff9800;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="classroom-wrapper">
+  <div class="classroom-container">
+
+    <!-- 👇 대시보드와 동일한 사이드바 -->
+    <aside class="sidebar">
+      <!-- 사용자 프로필 -->
+      <div class="sidebar-header">
+        <div class="avatar">👤</div>
+        <h2>{{ request.user.name }}</h2>
+        <span class="user-role">
+          {% if request.user.role == 'manager' %}
+            👑 관리자
+          {% elif request.user.role == 'instructor' %}
+            👨‍🏫 강사
+          {% else %}
+            🎓 학생
+          {% endif %}
+        </span>
+      </div>
+
+      <!-- 메인 메뉴 -->
+      <ul class="sidebar-menu">
+        <li><a href="{% url 'classroom:my_classroom' %}">📊 대시보드</a></li>
+        <li><a href="{% url 'classroom:calendar' %}" class="active">📅 캘린더</a></li>
+      </ul>
+
+      <!-- 내 강의 목록 -->
+      <div class="my-courses-section">
+          <div class="section-title">📚 내 강의</div>
+          {% if ongoing_courses %}
+            {% for enrollment in ongoing_courses %}
+              <a href="{% url 'classroom:my_course_detail' enrollment.course.course_id %}" class="course-item">
+                {{ enrollment.course.title }}
+              </a>
+            {% endfor %}
+          {% else %}
+            <div class="empty-courses">수강 중인 강의가 없습니다</div>
+          {% endif %}
+      </div>
+
+
+      <!-- 하단 메뉴 -->
+      <ul class="sidebar-menu">
+        <li><a href="{% url 'course:course_list' %}">🔍 강의 찾기</a></li>
+
+        {% if request.user.role == 'instructor' or request.user.role == 'manager' %}
+        <li><a href="{% url 'course:course_create' %}">➕ 강의 등록</a></li>
+        <li><a href="#">🎯 강의 준비실</a></li>
+        {% endif %}
+      </ul>
+    </aside>
+
+    <!-- 👇 기존 캘린더 기능 유지 -->
+    <main class="main-content">
+      <div class="calendar-header">
+        <h1 class="calendar-title">📅 캘린더</h1>
+        <div class="calendar-nav">
+          <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn-nav">◀ 이전</a>
+          <span class="current-month">{{ year }}년 {{ month }}월</span>
+          <a href="?year={{ next_year }}&month={{ next_month }}" class="btn-nav">다음 ▶</a>
+        </div>
+      </div>
+
+      <div class="calendar-grid">
+        <!-- 요일 헤더 -->
+        <div class="calendar-day-header">일</div>
+        <div class="calendar-day-header">월</div>
+        <div class="calendar-day-header">화</div>
+        <div class="calendar-day-header">수</div>
+        <div class="calendar-day-header">목</div>
+        <div class="calendar-day-header">금</div>
+        <div class="calendar-day-header">토</div>
+
+        <!-- 날짜 칸들 -->
+        {% for week in calendar_weeks %}
+          {% for day in week %}
+          <div class="calendar-day {% if not day.is_current_month %}other-month{% endif %}">
+            <div class="calendar-day-number">{{ day.day }}</div>
+
+            {% for course in day.courses %}
+            <div class="calendar-event event-{{ course.category }}" title="{{ course.title }}">
+              {% if course.start_time %}
+                {{ course.start_time|date:"H:i" }}
+              {% endif %}
+              {{ course.title }}
+            </div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        {% endfor %}
+      </div>
+    </main>
+
+  </div>
+</div>
+{% endblock %}

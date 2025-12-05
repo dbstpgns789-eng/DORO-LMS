@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ content.title }} | {{ course.title }}{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-inner">
+    <h1 class="hero-title">📚 {{ content.week_number }}주차 자료</h1>
+    <p class="hero-sub">{{ course.title }}</p>
+  </div>
+</section>
+
+<main class="card-wrap">
+  <div class="card-inner">
+    <article style="max-width: 900px; margin: 0 auto;">
+
+      <!-- 상단 정보 -->
+      <section style="background:#f8f9fa; padding:20px; border-radius:8px; margin-bottom:25px;">
+        <div style="display:flex; flex-wrap:wrap; gap:20px; font-size:14px;">
+          <div>
+            <span style="color:#6c757d;">주차:</span>
+            <strong>{{ content.week_number }}주차</strong>
+          </div>
+          {% if content.created_at %}
+          <div>
+            <span style="color:#6c757d;">등록일:</span>
+            <strong>{{ content.created_at|date:"Y-m-d" }}</strong>
+          </div>
+          {% endif %}
+        </div>
+      </section>
+
+      <!-- 제목 / 설명 -->
+      <section style="margin-bottom:30px;">
+        <h2 style="font-size:20px; font-weight:600; margin-bottom:12px;">{{ content.title }}</h2>
+        <div style="line-height:1.8; white-space:pre-wrap; padding:18px; border:1px solid #dee2e6; border-radius:8px;">
+          {{ content.description }}
+        </div>
+      </section>
+
+      <!-- 파일 / 동영상 링크 -->
+      <section style="margin-bottom:30px;">
+        <h3 style="font-size:18px; font-weight:600; margin-bottom:10px;">자료 보기</h3>
+
+        {% if content.file %}
+        <p style="margin-bottom:10px;">
+          📄 파일 자료:
+          <a href="{{ content.file.url }}" style="color:#0d6efd;" target="_blank">
+            {{ content.file.name }}
+          </a>
+        </p>
+        {% endif %}
+
+        {% if content.video_url %}
+        <p style="margin-bottom:10px;">
+          ▶️ 동영상:
+          <a href="{{ content.video_url }}" style="color:#dc3545;" target="_blank">
+            {{ content.video_url }}
+          </a>
+        </p>
+        {% endif %}
+
+        {% if not content.file and not content.video_url %}
+        <p style="color:#6c757d;">등록된 파일이나 동영상 링크가 없습니다.</p>
+        {% endif %}
+      </section>
+
+      <!-- 하단 버튼 -->
+      <div style="padding-top:20px; border-top:1px solid #dee2e6; display:flex; justify-content:space-between; align-items:center;">
+        <a href="{% url 'classroom:my_course_detail' course.course_id %}"
+           style="display:inline-block; padding:10px 20px; background:#6c757d; color:white; text-decoration:none; border-radius:5px;">
+          ← 강의실로
+        </a>
+
+        {% if request.user == course.instructor or request.user.role == 'manager' %}
+        <div style="display:flex; gap:8px;">
+          <a href="{% url 'classroom:weekly_update' content.content_id %}"
+             style="padding:8px 14px; background:#0d6efd; color:white; text-decoration:none; border-radius:5px; font-size:13px;">
+            ✏️ 자료 수정
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
+    </article>
+  </div>
+</main>
+{% endblock %}

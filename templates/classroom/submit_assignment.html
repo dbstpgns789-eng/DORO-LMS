@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}과제 제출 | {{ assignment.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .submit-wrap {
+    max-width: 900px;
+    margin: 30px auto 50px;
+    padding: 0 20px;
+  }
+  .submit-card {
+    background:#ffffff;
+    border:1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 28px 26px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  }
+  .submit-header {
+    margin-bottom: 20px;
+  }
+  .submit-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .submit-sub {
+    font-size: 14px;
+    color:#6c757d;
+  }
+  .info-box {
+    background:#f8f9fa;
+    border-radius:8px;
+    padding:14px 16px;
+    font-size:14px;
+    color:#495057;
+    margin-bottom: 24px;
+  }
+  .info-meta {
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    font-size:13px;
+    color:#6c757d;
+    margin-top:6px;
+  }
+  .form-group {
+    margin-bottom:18px;
+  }
+  .field-label {
+    display:block;
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:6px;
+    color:#343a40;
+  }
+  .field-help {
+    font-size:12px;
+    color:#868e96;
+    margin-top:4px;
+  }
+  .field-error {
+    font-size:12px;
+    color:#dc3545;
+    margin-top:4px;
+  }
+  textarea {
+    width:100%;
+    min-height:150px;
+    padding:9px 11px;
+    border:1px solid #ced4da;
+    border-radius:6px;
+    font-size:14px;
+    resize:vertical;
+    box-sizing:border-box;
+  }
+  input[type="file"] {
+    font-size:14px;
+  }
+  .current-file {
+    margin-top:8px;
+    font-size:13px;
+    color:#6c757d;
+  }
+  .submit-actions {
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    padding-top:18px;
+    border-top:1px solid #e9ecef;
+    margin-top:4px;
+  }
+  .btn-cancel,
+  .btn-submit {
+    padding:10px 20px;
+    border-radius:6px;
+    font-size:14px;
+    font-weight:500;
+    text-decoration:none;
+    border:none;
+    cursor:pointer;
+  }
+  .btn-cancel {
+    background:#6c757d;
+    color:#fff;
+  }
+  .btn-cancel:hover { background:#5a6268; }
+  .btn-submit {
+    background:#28a745;
+    color:#fff;
+  }
+  .btn-submit:hover { background:#218838; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-inner">
+    <h1 class="hero-title">📤 과제 제출</h1>
+    <p class="hero-sub">{{ assignment.course.title }}</p>
+  </div>
+</section>
+
+<main class="submit-wrap">
+  <div class="submit-card">
+
+    <!-- 상단 제목 -->
+    <div class="submit-header">
+      <div class="submit-title">{{ assignment.title }}</div>
+      <div class="submit-sub">
+        {% if submission %}이미 제출한 과제를 수정할 수 있습니다.{% else %}아래 양식에 맞게 과제를 제출하세요.{% endif %}
+      </div>
+    </div>
+
+    <!-- 과제 정보 -->
+    <div class="info-box">
+      <div>📚 {{ assignment.course.title }}</div>
+      <div class="info-meta">
+        <span>📅 마감: {{ assignment.due_date|date:"Y-m-d H:i" }}</span>
+        <span>💯 배점: {{ assignment.max_score }}점</span>
+      </div>
+    </div>
+
+    <!-- 제출 폼 -->
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- 텍스트 답변 -->
+      <div class="form-group">
+        <label class="field-label">텍스트 답변 (선택)</label>
+        {{ form.content }}
+        {% if form.content.errors %}
+          <div class="field-error">{{ form.content.errors }}</div>
+        {% endif %}
+        <div class="field-help">
+          간단한 설명이나 추가 내용을 텍스트로 작성하고 싶을 때 사용하세요.
+        </div>
+      </div>
+
+      <!-- 파일 업로드 -->
+      <div class="form-group">
+        <label class="field-label">파일 업로드 (PDF 등)</label>
+        {{ form.file }}
+        {% if form.file.errors %}
+          <div class="field-error">{{ form.file.errors }}</div>
+        {% endif %}
+
+        {% if submission and submission.file %}
+        <div class="current-file">
+          현재 제출된 파일:
+          <a href="{{ submission.file.url }}" target="_blank" style="color:#0d6efd;">
+            {{ submission.file.name }}
+          </a>
+        </div>
+        {% endif %}
+
+        <div class="field-help">
+          PDF, 문서, 이미지 등 허용된 형식의 파일 한 개를 업로드할 수 있습니다.
+        </div>
+      </div>
+
+      <!-- 버튼 영역 -->
+      <div class="submit-actions">
+        <a href="{% url 'classroom:assignment_detail' assignment.assignment_id %}" class="btn-cancel">
+          취소
+        </a>
+        <button type="submit" class="btn-submit">
+          {% if submission %}재제출하기{% else %}제출하기{% endif %}
+        </button>
+      </div>
+    </form>
+
+  </div>
+</main>
+{% endblock %}

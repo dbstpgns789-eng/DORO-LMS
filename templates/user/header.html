@@ -44,7 +44,10 @@
     <div class="nav-inner">
       <a href="{% url 'user:mypage' %}">마이페이지</a>
       <a href="{% url 'user:community' %}">커뮤니티</a>
-      <a href="{% url 'user:courses' %}">내 강의실</a>
+
+      <!-- 👇 이 줄 수정 -->
+      <a href="{% url 'classroom:my_classroom' %}">내 강의실</a>
+
       <a href="/support/">고객지원</a>
       <a href="#"
          onclick="window.open('https://dimctest.com/', '_blank'); window.location.href='{% url 'user:DIMC' %}'; return false;">

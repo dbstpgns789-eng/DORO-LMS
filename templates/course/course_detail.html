@@ -3,59 +3,241 @@
 
 {% block title %}{{ course.title }} | DORO LMS{% endblock %}
 
+{% block extra_css %}
+<style>
+  .course-detail {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    white-space: pre-line;
+  }
+
+  .alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+  }
+
+  .alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+  }
+
+  .course-header {
+    margin-bottom: 30px;
+  }
+
+  .course-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #212529;
+  }
+
+  .course-meta {
+    display: flex;
+    gap: 20px;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .course-info-box {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .info-row:last-child {
+    border-bottom: none;
+  }
+
+  .info-label {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .info-value {
+    color: #666;
+  }
+
+  .course-description {
+    line-height: 1.8;
+    margin-bottom: 30px;
+  }
+
+  /* 👇 관리 버튼 */
+  .admin-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff3cd;
+    border-radius: 8px;
+  }
+
+  .btn-edit {
+    padding: 10px 20px;
+    background-color: #0d6efd;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+  }
+
+  .btn-edit:hover {
+    background-color: #0b5ed7;
+  }
+
+  .btn-delete {
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+  }
+
+  .btn-delete:hover {
+    background-color: #bb2d3b;
+  }
+
+  .btn-enroll {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: #4285F4;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .btn-enroll:hover {
+    background-color: #3367D6;
+  }
+
+  .btn-enrolled {
+    background-color: #28a745;
+  }
+
+  .btn-disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="hero">
-  <div class="hero-inner">
-    <h1 class="hero-title">강의 상세</h1>
-  </div>
-</section>
+<div class="course-detail">
 
-<main class="card-wrap">
-  <div class="card-inner">
-
-    <article style="max-width: 900px; margin: 0 auto;">
-
-      <!-- 강의 정보 -->
-      <header style="border-bottom: 2px solid #dee2e6; padding-bottom: 20px; margin-bottom: 20px;">
-        <h2 style="margin: 10px 0 20px; font-size: 28px; font-weight: 600;">{{ course.title }}</h2>
-
-        <div style="display: flex; gap: 20px; color: #6c757d; font-size: 14px;">
-          <span>👨‍🏫 강사: {{ course.instructor.name }}</span>
-          <span>📅 등록일: {{ course.created_at|date:"Y년 m월 d일" }}</span>
-          <span>👁️ 조회수: {{ course.views }}</span>
-        </div>
-      </header>
-
-      <!-- 강의 설명 -->
-      <div style="line-height: 1.8; padding: 30px 0; min-height: 300px; white-space: pre-wrap;">
-        {{ course.description }}
+  <!-- 메시지 표시 -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
       </div>
+    {% endfor %}
+  {% endif %}
 
-      <!-- 하단 버튼 -->
-      <footer style="border-top: 1px solid #dee2e6; padding-top: 20px; margin-top: 40px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+  <!-- 👇 강사 본인 또는 관리자만 수정/삭제 버튼 표시 -->
+  {% if user.is_authenticated %}
+    {% if user == course.instructor or user.role == "manager" %}
+    <div class="admin-buttons">
+      <span style="flex: 1; font-weight: 600; color: #856404;">📝 강의 관리</span>
+      <a href="{% url 'course:course_update' course.course_id %}" class="btn-edit">✏️ 수정</a>
+      <a href="{% url 'course:course_delete' course.course_id %}" class="btn-delete">🗑️ 삭제</a>
+    </div>
+    {% endif %}
+  {% endif %}
 
-          <!-- 홈으로 버튼 -->
-          <a href="{% url 'index' %}" style="display: inline-block; padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px;">
-            ← 홈으로
-          </a>
+  <div class="course-header">
+    <h1 class="course-title">{{ course.title }}</h1>
 
-          <!-- 강사 본인만 수정/삭제 -->
-          {% if request.user == course.instructor %}
-          <div style="display: flex; gap: 10px;">
-            <a href="{% url 'course:course_update' course.course_id %}" style="display: inline-block; padding: 10px 20px; background-color: #0d6efd; color: white; text-decoration: none; border-radius: 5px;">
-              ✏️ 수정
-            </a>
-            <a href="{% url 'course:course_delete' course.course_id %}" style="display: inline-block; padding: 10px 20px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 5px;">
-              🗑️ 삭제
-            </a>
-          </div>
-          {% endif %}
-        </div>
-      </footer>
-
-    </article>
-
+    <div class="course-meta">
+      <span>👨‍🏫 강사: {{ course.instructor.name }}</span>
+      <span>📂 카테고리: {{ course.get_category_display }}</span>
+      <span>👁️ 조회수: {{ course.views }}</span>
+    </div>
   </div>
-</main>
+
+  <!-- 강의 정보 -->
+  <div class="course-info-box">
+    <h3 style="margin-bottom: 15px; font-size: 20px; font-weight: 600;">📋 강의 정보</h3>
+
+    <div class="info-row">
+      <span class="info-label">📆 수강 기간</span>
+      <span class="info-value">{{ course.start_date }} ~ {{ course.end_date }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">📅 강의 요일</span>
+      <span class="info-value">{{ course.get_weekday_display }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">⏰ 강의 시간</span>
+      <span class="info-value">{{ course.start_time|date:"H:i" }} - {{ course.end_time|date:"H:i" }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">📚 등록일</span>
+      <span class="info-value">{{ course.created_at|date:"Y년 m월 d일" }}</span>
+    </div>
+  </div>
+
+  <!-- 강의 이미지 -->
+  {% if course.image %}
+  <div style="margin-bottom: 30px;">
+    <img src="{{ course.image.url }}" alt="{{ course.title }}" style="width: 100%; max-width: 600px; border-radius: 8px;">
+  </div>
+  {% endif %}
+
+  <!-- 강의 설명 -->
+  <div class="course-description">
+    <h3 style="margin-bottom: 15px; font-size: 20px; font-weight: 600;">📝 강의 설명</h3>
+    <p style="font-size: 16px; line-height: 1.8; color: #333;">{{ course.description }}</p>
+  </div>
+
+  <!-- 수강 신청 버튼 -->
+  {% if user.is_authenticated %}
+    {% if is_enrolled %}
+      <a href="{% url 'classroom:my_classroom' %}" class="btn-enroll btn-enrolled">
+        ✅ 수강 중 - 내 강의실로 이동
+      </a>
+    {% else %}
+      {% if course.is_expired %}
+        <span class="btn-enroll btn-disabled">
+          ⏰ 수강 기간이 종료되었습니다
+        </span>
+      {% else %}
+        <a href="{% url 'classroom:enroll' course.course_id %}" class="btn-enroll">
+          📚 수강 신청하기
+        </a>
+      {% endif %}
+    {% endif %}
+  {% else %}
+    <p style="color: #666; font-size: 16px;">로그인 후 수강 신청이 가능합니다.</p>
+    <a href="{% url 'user:login' %}" class="btn-enroll">로그인하기</a>
+  {% endif %}
+
+</div>
 {% endblock %}

@@ -24,5 +24,23 @@
       {% block content %}{% endblock %}
     </main>
   </div>
+
 </body>
+<!-- 👇 이 부분 전체 삭제 -->
+<!--
+{% if request.user.is_authenticated %}
+<div class="nav-menu">
+  <a href="{% url 'classroom:my_classroom' %}">📚 내 강의실</a>
+  <a href="{% url 'board:notice_list' %}">📢 공지사항</a>
+  <a href="{% url 'user:mypage' %}">👤 {{ request.user.name }}</a>
+  <a href="{% url 'user:logout' %}">로그아웃</a>
+</div>
+{% else %}
+<div class="nav-menu">
+  <a href="{% url 'board:notice_list' %}">📢 공지사항</a>
+  <a href="{% url 'user:login' %}">로그인</a>
+  <a href="{% url 'user:term' %}">회원가입</a>
+</div>
+{% endif %}
+-->
 </html>

@@ -72,7 +72,8 @@ class User(AbstractUser):
 class DIMC(models.Model):
     test_id = models.AutoField(primary_key=True)
     student = models.ForeignKey(User, on_delete=models.PROTECT)  # User 모델 참조
-    pdf_path = models.TextField(verbose_name="PDF 파일 경로")
+
+    pdf_path = models.FileField(upload_to='dimc_reports/')
     D_score = models.IntegerField(verbose_name="D 점수")
     I_score = models.IntegerField(verbose_name="I 점수")
     M_score = models.IntegerField(verbose_name="M 점수")

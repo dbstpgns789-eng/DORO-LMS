@@ -1,0 +1,80 @@
+<!-- templates/classroom/question_detail.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ question.title }} | 질문 게시판{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 40px auto; padding: 20px;">
+
+  <!-- 뒤로 가기 -->
+  <a href="{% url 'classroom:my_course_detail' course.course_id %}"
+     style="display: inline-block; margin-bottom: 20px; color: #4650D5; text-decoration: none;">
+    ← 강의실로 돌아가기
+  </a>
+
+  <!-- 질문 -->
+  <div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px; margin-bottom: 30px;">
+    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+      <h2 style="margin: 0;">{{ question.title }}</h2>
+      {% if request.user == question.author or request.user == course.instructor %}
+      <a href="{% url 'classroom:question_resolve' question.question_id %}"
+         style="padding: 6px 12px; {% if question.is_resolved %}background-color: #6c757d;{% else %}background-color: #28a745;{% endif %} color: white; text-decoration: none; border-radius: 4px; font-size: 13px;">
+        {% if question.is_resolved %}미해결로 변경{% else %}✅ 해결됨 표시{% endif %}
+      </a>
+      {% endif %}
+    </div>
+
+    <div style="display: flex; gap: 15px; font-size: 14px; color: #666; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+      <span>👤 {{ question.author.name }}</span>
+      <span>📅 {{ question.created_at|date:"Y.m.d H:i" }}</span>
+      {% if question.is_resolved %}
+      <span style="color: #28a745; font-weight: 600;">✅ 해결됨</span>
+      {% endif %}
+    </div>
+
+    <div style="line-height: 1.6; white-space: pre-wrap;">{{ question.content }}</div>
+  </div>
+
+  <!-- 답변 목록 -->
+  <h3 style="margin-bottom: 20px;">💬 답변 ({{ answers.count }}개)</h3>
+
+  {% for answer in answers %}
+  <div style="background: {% if answer.is_instructor_answer %}#fff8e1{% else %}#f8f9fa{% endif %}; border-left: 4px solid {% if answer.is_instructor_answer %}#ffc107{% else %}#dee2e6{% endif %}; border-radius: 4px; padding: 20px; margin-bottom: 15px;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+      <span style="font-weight: 600; color: #333;">
+        {{ answer.author.name }}
+
+      </span>
+      <span style="font-size: 13px; color: #666;">{{ answer.created_at|date:"Y.m.d H:i" }}</span>
+    </div>
+    <div style="line-height: 1.6; white-space: pre-wrap;">{{ answer.content }}</div>
+  </div>
+  {% empty %}
+  <p style="text-align: center; color: #999; padding: 40px;">아직 답변이 없습니다.</p>
+  {% endfor %}
+
+  <!-- 답변 작성 폼 -->
+  <div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-top: 30px;">
+    <h4 style="margin-bottom: 15px;">답변 작성</h4>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.content }}
+      <button type="submit" style="margin-top: 10px; padding: 10px 20px; background-color: #4650D5; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        답변 등록
+      </button>
+    </form>
+  </div>
+
+</div>
+
+<style>
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+</style>
+{% endblock %}

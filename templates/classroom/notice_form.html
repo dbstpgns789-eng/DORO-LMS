@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if is_update %}공지 수정{% else %}공지 작성{% endif %} | {{ course.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .notice-form-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+
+  .form-header {
+    margin-bottom: 30px;
+  }
+
+  .form-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .course-info {
+    color: #666;
+    font-size: 14px;
+  }
+
+  .alert {
+    padding: 12px 16px;
+    background-color: #e7f3ff;
+    border: 1px solid #4650D5;
+    border-radius: 5px;
+    color: #2c5282;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+
+  .form-box {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .form-label .required {
+    color: #dc3545;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #4650D5;
+    box-shadow: 0 0 0 3px rgba(70, 80, 213, 0.1);
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 250px;
+    line-height: 1.6;
+  }
+
+  .form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+  }
+
+  .form-check-input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  .form-check-label {
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .form-help-text {
+    font-size: 13px;
+    color: #666;
+    margin-top: 5px;
+  }
+
+  .error-message {
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 5px;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background-color: #4650D5;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #3640C5;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="notice-form-container">
+
+  <!-- 헤더 -->
+  <div class="form-header">
+    <h2>📢 {% if is_update %}공지사항 수정{% else %}공지사항 작성{% endif %}</h2>
+    <p class="course-info">📚 {{ course.title }}</p>
+  </div>
+
+  <!-- 안내 메시지 -->
+  <div class="alert">
+    💡 <strong>상단 고정</strong>을 선택하면 공지사항 목록 맨 위에 표시됩니다.
+  </div>
+
+  <!-- 폼 -->
+  <div class="form-box">
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- 제목 -->
+      <div class="form-group">
+        <label class="form-label" for="id_title">
+          제목 <span class="required">*</span>
+        </label>
+        {{ form.title }}
+        {% if form.title.errors %}
+          <div class="error-message">
+            {{ form.title.errors }}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- 내용 -->
+      <div class="form-group">
+        <label class="form-label" for="id_content">
+          내용 <span class="required">*</span>
+        </label>
+        {{ form.content }}
+        {% if form.content.errors %}
+          <div class="error-message">
+            {{ form.content.errors }}
+          </div>
+        {% endif %}
+        <div class="form-help-text">
+          학생들에게 전달할 공지 내용을 작성하세요.
+        </div>
+      </div>
+
+      <!-- 상단 고정 체크박스 -->
+      <div class="form-group">
+        <div class="form-check">
+          {{ form.is_pinned }}
+          <label class="form-check-label" for="id_is_pinned">
+            📌 상단 고정 (중요 공지인 경우 선택)
+          </label>
+        </div>
+      </div>
+
+      <!-- 버튼 -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          ✅ {% if is_update %}수정 완료{% else %}공지 등록{% endif %}
+        </button>
+        <a href="{% url 'classroom:my_course_detail' course.course_id %}" class="btn btn-secondary">
+          취소
+        </a>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  {% if is_update %}과제 수정 | {{ course.title }}{% else %}과제 등록 | {{ course.title }}{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .asg-form-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  .asg-header {
+    margin-bottom: 25px;
+  }
+  .asg-header-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .asg-header-sub {
+    font-size: 14px;
+    color: #6c757d;
+  }
+  .asg-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 28px 26px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  }
+  .asg-form-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .asg-col-6 {
+    flex: 1 1 220px;
+  }
+  .asg-form-group {
+    margin-bottom: 18px;
+  }
+  .asg-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #343a40;
+  }
+  .asg-label .req {
+    color: #dc3545;
+    margin-left: 3px;
+  }
+  .asg-control {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  textarea.asg-control {
+    min-height: 150px;
+    resize: vertical;
+  }
+  .asg-help {
+    font-size: 12px;
+    color: #868e96;
+    margin-top: 4px;
+  }
+  .asg-error {
+    font-size: 12px;
+    color: #dc3545;
+    margin-top: 4px;
+  }
+  .asg-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #e9ecef;
+  }
+  .btn-primary {
+    padding: 10px 22px;
+    border-radius: 6px;
+    border: none;
+    background-color: #4650D5;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-primary:hover {
+    background-color: #3640C5;
+  }
+  .btn-secondary {
+    padding: 10px 22px;
+    border-radius: 6px;
+    border: none;
+    background-color: #6c757d;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="asg-form-container">
+
+  <div class="asg-header">
+    <div class="asg-header-title">
+      {% if is_update %}📝 과제 수정{% else %}📝 과제 등록{% endif %}
+    </div>
+    <div class="asg-header-sub">📚 {{ course.title }}</div>
+  </div>
+
+  <div class="asg-card">
+    <!-- 👇 파일 업로드를 위해 enctype 추가 -->
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="asg-form-group">
+        <label class="asg-label" for="id_title">제목<span class="req">*</span></label>
+        {{ form.title }}
+        {% if form.title.errors %}
+          <div class="asg-error">{{ form.title.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="asg-form-group">
+        <label class="asg-label" for="id_description">설명<span class="req">*</span></label>
+        {{ form.description }}
+        {% if form.description.errors %}
+          <div class="asg-error">{{ form.description.errors }}</div>
+        {% endif %}
+        <div class="asg-help">학생에게 보여질 과제 지시사항을 자세히 적어주세요.</div>
+      </div>
+
+      <div class="asg-form-row">
+        <div class="asg-col-6">
+          <div class="asg-form-group">
+            <label class="asg-label" for="id_due_date">마감일<span class="req">*</span></label>
+            {{ form.due_date }}
+            {% if form.due_date.errors %}
+              <div class="asg-error">{{ form.due_date.errors }}</div>
+            {% endif %}
+            <div class="asg-help">예: 2025-12-31 23:59 형식으로 입력.</div>
+          </div>
+        </div>
+
+        <div class="asg-col-6">
+          <div class="asg-form-group">
+            <label class="asg-label" for="id_max_score">배점<span class="req">*</span></label>
+            {{ form.max_score }}
+            {% if form.max_score.errors %}
+              <div class="asg-error">{{ form.max_score.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {% if is_update and assignment.attachment %}
+      <!-- 기존 첨부 파일 미리보기 (수정 시에만) -->
+      <div class="asg-form-group">
+        <label class="asg-label">현재 첨부 파일</label>
+        <div style="padding: 10px; border-radius: 6px; border: 1px solid #dee2e6; background:#f8f9fa;">
+          <a href="{{ assignment.attachment.url }}" target="_blank" style="color:#0d6efd;">
+            {{ assignment.attachment.name }}
+          </a>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="asg-form-group">
+        <label class="asg-label" for="id_attachment">첨부 파일 (선택)</label>
+        {{ form.attachment }}
+        {% if form.attachment.errors %}
+          <div class="asg-error">{{ form.attachment.errors }}</div>
+        {% endif %}
+        <div class="asg-help">과제 설명용 PDF, 자료 등이 있으면 업로드하세요.</div>
+      </div>
+
+      <div class="asg-actions">
+        <a href="{% url 'classroom:my_course_detail' course.course_id %}" class="btn-secondary">취소</a>
+        <button type="submit" class="btn-primary">
+          {% if is_update %}수정 완료{% else %}등록하기{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

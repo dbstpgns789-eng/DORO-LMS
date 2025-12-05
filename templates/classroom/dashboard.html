@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}내 강의실 | DORO LMS{% endblock %}
+
+{% block extra_css %}
+<style>
+  .classroom-container {
+    display: flex;
+    min-height: calc(100vh - 200px);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 20px;
+  }
+
+  /* 좌측 사이드바 */
+  .sidebar {
+    width: 250px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0;
+    height: fit-content;
+  }
+
+  .sidebar-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 25px 20px;
+    border-bottom: 2px solid #4650D5;
+    background-color: #f8f9fa;
+  }
+
+  .sidebar-header .avatar {
+    width: 60px;
+    height: 60px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+  }
+
+  .sidebar-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .user-role {
+    font-size: 12px;
+    color: #666;
+    background-color: #e3f2fd;
+    padding: 4px 12px;
+    border-radius: 12px;
+  }
+
+  .sidebar-menu {
+    list-style: none;
+    padding: 15px;
+    margin: 0;
+  }
+
+  .sidebar-menu li {
+    margin-bottom: 5px;
+  }
+
+  .sidebar-menu a {
+    display: block;
+    padding: 12px 15px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.2s;
+    font-size: 14px;
+  }
+
+  .sidebar-menu a:hover {
+    background-color: #f0f0f0;
+  }
+
+  .sidebar-menu a.active {
+    background-color: #4650D5;
+    color: white;
+    font-weight: 600;
+  }
+
+  /* 👇 내 강의 섹션 */
+  .my-courses-section {
+    padding: 15px;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .course-item {
+    display: block;
+    padding: 10px;
+    margin: 5px 0;
+    color: #333;
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 5px;
+    transition: all 0.2s;
+  }
+
+  .course-item:hover {
+    background-color: #f0f0f0;
+  }
+
+  .empty-courses {
+    padding: 10px;
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+  }
+
+  /* 메인 콘텐츠 */
+  .main-content {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 30px;
+  }
+
+  .content-header {
+    margin-bottom: 30px;
+  }
+
+  .content-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+  }
+
+  .content-header p {
+    color: #666;
+    margin: 0;
+  }
+
+  /* 주간 시간표 */
+  .week-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+
+  .day-column {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    min-height: 200px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .day-header {
+    background-color: #f8f9fa;
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .day-date {
+    font-size: 10px;
+    color: #666;
+    font-weight: normal;
+    display: block;
+    margin-top: 3px;
+  }
+
+  .day-events {
+    padding: 10px 8px;
+    flex: 1;
+  }
+
+  .event-item {
+    background-color: #e3f2fd;
+    border-left: 3px solid #2196F3;
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+
+  .event-time {
+    font-weight: 600;
+    color: #1976D2;
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  .event-title {
+    color: #333;
+    word-wrap: break-word;
+    line-height: 1.3;
+  }
+
+  /* 예정된 강의 */
+  .upcoming-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .upcoming-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: box-shadow 0.2s;
+  }
+
+  .upcoming-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .upcoming-date {
+    min-width: 80px;
+    text-align: center;
+    padding-right: 20px;
+    border-right: 2px solid #e0e0e0;
+  }
+
+  .upcoming-date-day {
+    font-size: 20px;
+    font-weight: 700;
+    color: #007bff;
+  }
+
+  .upcoming-date-label {
+    font-size: 11px;
+    color: #666;
+    margin-top: 5px;
+  }
+
+  .upcoming-info {
+    flex: 1;
+    padding-left: 20px;
+  }
+
+  .upcoming-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .upcoming-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+    color: #666;
+  }
+
+  .upcoming-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: #e3f2fd;
+    color: #1976D2;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="classroom-container">
+
+  <!-- 좌측 사이드바 -->
+  <aside class="sidebar">
+    <!-- 사용자 프로필 -->
+    <div class="sidebar-header">
+      <div class="avatar">👤</div>
+      <h2>{{ request.user.name }}</h2>
+      <span class="user-role">
+        {% if request.user.role == 'manager' %}
+          👑 관리자
+        {% elif request.user.role == 'instructor' %}
+          👨‍🏫 강사
+        {% else %}
+          🎓 학생
+        {% endif %}
+      </span>
+    </div>
+
+    <!-- 메인 메뉴 -->
+    <ul class="sidebar-menu">
+      <li><a href="{% url 'classroom:my_classroom' %}" class="active">📊 대시보드</a></li>
+      <li><a href="{% url 'classroom:calendar' %}">📅 캘린더</a></li>
+    </ul>
+
+    <!-- 👇 내 강의 목록 -->
+    <div class="my-courses-section">
+      <div class="section-title">📚 내 강의</div>
+      {% if ongoing_courses %}
+        {% for enrollment in ongoing_courses %}
+          <a href="{% url 'classroom:my_course_detail' enrollment.course.course_id %}" class="course-item">
+            {{ enrollment.course.title }}
+          </a>
+        {% endfor %}
+      {% else %}
+        <div class="empty-courses">
+          수강 중인 강의가 없습니다
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- 하단 메뉴 -->
+    <ul class="sidebar-menu">
+      <li><a href="{% url 'course:course_list' %}">🔍 강의 찾기</a></li>
+
+      <!-- 👇 강사/관리자만 보이는 메뉴 -->
+      {% if request.user.role == 'instructor' or request.user.role == 'manager' %}
+      <li><a href="{% url 'course:course_create' %}">➕ 강의 등록</a></li>
+
+      {% endif %}
+    </ul>
+  </aside>
+
+  <!-- 메인 콘텐츠 -->
+  <main class="main-content">
+    <div class="content-header">
+      <h1>📅 주간 시간표</h1>
+      <p>이번 주 강의 일정을 확인하세요</p>
+    </div>
+
+    <!-- 주간 시간표 -->
+    <div class="week-calendar">
+      {% for day in weekly_schedule %}
+      <div class="day-column">
+        <div class="day-header">
+          {{ day.weekday_name }}
+          <span class="day-date">{{ day.date }}</span>
+        </div>
+        <div class="day-events">
+          {% for course in day.courses %}
+          <div class="event-item">
+            <div class="event-time">
+              {% if course.start_time and course.end_time %}
+                {{ course.start_time|date:"H:i" }} - {{ course.end_time|date:"H:i" }}
+              {% endif %}
+            </div>
+            <div class="event-title">{{ course.title }}</div>
+          </div>
+          {% empty %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- 예정된 강의 -->
+    <div class="content-header" style="margin-top: 40px;">
+      <h1>⏰ 예정된 강의</h1>
+      <p>다가오는 강의를 확인하세요</p>
+    </div>
+
+    {% if upcoming_courses %}
+    <div class="upcoming-list">
+      {% for item in upcoming_courses %}
+      <div class="upcoming-item">
+        <div class="upcoming-date">
+          <div class="upcoming-date-day">
+            {{ item.course.get_weekday_display }}
+          </div>
+          <div class="upcoming-date-label">{{ item.date_str }}</div>
+        </div>
+
+        <div class="upcoming-info">
+          <div class="upcoming-title">{{ item.course.title }}</div>
+          <div class="upcoming-meta">
+            <span>👨‍🏫 {{ item.course.instructor.name }}</span>
+            <span>⏰ {{ item.course.start_time|date:"H:i" }} - {{ item.course.end_time|date:"H:i" }}</span>
+            <span class="upcoming-badge">{{ item.course.get_category_display }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <p style="font-size: 48px;">📚</p>
+      <p>예정된 강의가 없습니다</p>
+    </div>
+    {% endif %}
+
+  </main>
+
+</div>
+{% endblock %}

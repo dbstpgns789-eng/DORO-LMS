@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}질문 작성 | {{ course.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .question-form-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+
+  .form-header {
+    margin-bottom: 30px;
+  }
+
+  .form-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .course-info {
+    color: #666;
+    font-size: 14px;
+  }
+
+  .form-box {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #4650D5;
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 200px;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background-color: #4650D5;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #3640C5;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="question-form-container">
+
+  <div class="form-header">
+    <h2>💬 질문 작성</h2>
+    <p class="course-info">📚 {{ course.title }}</p>
+  </div>
+
+  <div class="form-box">
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label" for="id_title">제목</label>
+        {{ form.title }}
+        {% if form.title.errors %}
+        <div style="color: #dc3545; font-size: 13px; margin-top: 5px;">
+          {{ form.title.errors }}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="id_content">내용</label>
+        {{ form.content }}
+        {% if form.content.errors %}
+        <div style="color: #dc3545; font-size: 13px; margin-top: 5px;">
+          {{ form.content.errors }}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          ✅ 질문 등록
+        </button>
+        <a href="{% url 'classroom:my_course_detail' course.course_id %}" class="btn btn-secondary">
+          취소
+        </a>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

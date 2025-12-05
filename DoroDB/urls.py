@@ -33,6 +33,7 @@ urlpatterns = [
     path('chat/', include('chat.urls')),
     path('board/', include('board.urls')),
     path('course/', include('course.urls')),
+    path('classroom/', include('classroom.urls')),
 
 ]
 

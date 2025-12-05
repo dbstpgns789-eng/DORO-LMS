@@ -186,8 +186,8 @@ def logout_view(request):
 
 
 # 나머지 함수들은 그대로 유지...
-@login_required
 def dimc_results_view(request):
+    """로그인한 사용자의 DIMC 아카이브 목록"""
     user_results = DIMC.objects.filter(student=request.user).order_by('-tested_at')
     return render(request, 'user/dimc_results.html', {'results': user_results})
 
@@ -231,14 +231,17 @@ def user_delete_view(request):
 @login_required
 def DIMC_archive_view(request):
     if request.method == 'POST':
-        form = DIMCForm(request.POST)
+        # ✅ 여기에서 request.FILES 까지 같이 넣어줘야 파일이 저장됨
+        form = DIMCForm(request.POST, request.FILES)
         if form.is_valid():
             dimc = form.save(commit=False)
             dimc.student = request.user
             dimc.save()
-            return redirect('user:DIMC_archive')
+            # 저장 후 업로드 내역 페이지로 이동
+            return redirect('user:dimc_results')
     else:
         form = DIMCForm()
+
     return render(request, 'user/DIMC_archive.html', {'form': form})
 
 

@@ -19,11 +19,13 @@
   <!-- 콘텐츠 메인 영역 -->
   <main class="main-content container">
 
-    <!-- AI 강의추천 -->
+    <!-- 최신 강의 -->
     <section class="card ai-section">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h2 class="card-title" style="margin: 0;">🎓 최신 강의</h2>
-        <div>
+        <div style="display: flex; gap: 10px;">
+          <a href="{% url 'course:course_list' %}" style="color: #6c757d; text-decoration: none; font-size: 14px;">더보기 →</a>
+
           {% if request.user.is_authenticated %}
             {% if request.user.role == "instructor" or request.user.role == "manager" %}
             <a href="{% url 'course:course_create' %}" style="display: inline-block; padding: 6px 14px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; font-size: 14px;">
@@ -38,20 +40,57 @@
         {% if recent_courses %}
           <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
             {% for course in recent_courses %}
-            <a href="{% url 'course:course_detail' course.course_id %}" style="text-decoration: none; color: inherit; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; transition: box-shadow 0.2s;">
-              <div style="text-align: center; margin-bottom: 15px; font-size: 48px;">📚</div>
-              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">{{ course.title }}</h3>
-              <p style="font-size: 14px; color: #6c757d; margin-bottom: 10px;">{{ course.instructor.name }}</p>
-              <div style="display: flex; justify-content: space-between; font-size: 12px; color: #6c757d;">
-                <span>{{ course.created_at|date:"Y.m.d" }}</span>
-                <span>👁️ {{ course.views }}</span>
+            <a href="{% url 'course:course_detail' course.course_id %}" style="text-decoration: none; color: inherit;">
+              <div style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden; transition: all 0.3s; cursor: pointer;"
+                   onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'; this.style.transform='translateY(-5px)';"
+                   onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)';">
+
+                <!-- 👇 이미지 또는 기본 아이콘 -->
+                {% if course.image %}
+                  <img src="{{ course.image.url }}" alt="{{ course.title }}" style="width: 100%; height: 150px; object-fit: cover;">
+                {% else %}
+                  <div style="width: 100%; height: 150px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa; font-size: 64px;">
+                    📚
+                  </div>
+                {% endif %}
+
+                <!-- 강의 정보 -->
+                <div style="padding: 20px;">
+                  <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #212529;">
+                    {{ course.title }}
+                  </h3>
+
+                  <p style="font-size: 14px; color: #6c757d; margin-bottom: 10px;">
+                    👨‍🏫 {{ course.instructor.name }}
+                  </p>
+
+                  <div style="display: flex; justify-content: space-between; font-size: 12px; color: #6c757d; margin-bottom: 15px;">
+                    <span>{{ course.created_at|date:"Y.m.d" }}</span>
+                    <span>👁️ {{ course.views }}</span>
+                  </div>
+
+                  <!-- 강의 시간 정보 -->
+                  {% if course.weekday is not None and course.start_time %}
+                  <div style="font-size: 12px; color: #6c757d; margin-bottom: 12px; padding: 8px; background-color: #f8f9fa; border-radius: 5px; text-align: center;">
+                    📅 {{ course.get_weekday_display }} {{ course.start_time|date:"H:i" }}
+                    {% if course.end_time %}
+                      - {{ course.end_time|date:"H:i" }}
+                    {% endif %}
+                  </div>
+                  {% endif %}
+
+                  <!-- 카테고리 뱃지 -->
+                  <div style="display: inline-block; padding: 4px 12px; background-color: #e3f2fd; color: #1976d2; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                    {{ course.get_category_display }}
+                  </div>
+                </div>
               </div>
             </a>
             {% endfor %}
           </div>
         {% else %}
           <div style="padding: 40px; text-align: center; color: #6c757d;">
-            <p>등록된 강의가 없습니다.</p>
+            <p>📚 등록된 강의가 없습니다.</p>
             {% if request.user.is_authenticated %}
               {% if request.user.role == "instructor" or request.user.role == "manager" %}
               <p style="margin-top: 15px;">

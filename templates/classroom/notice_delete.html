@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}공지 삭제 | {{ course.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .delete-container {
+    max-width: 600px;
+    margin: 80px auto;
+    padding: 20px;
+  }
+
+  .delete-box {
+    background: white;
+    border: 2px solid #dc3545;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+  }
+
+  .delete-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    animation: shake 0.5s;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .delete-box h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .notice-info {
+    background-color: #f8f9fa;
+    border-left: 4px solid #dc3545;
+    padding: 15px;
+    margin: 20px 0;
+    text-align: left;
+  }
+
+  .notice-info-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+  }
+
+  .notice-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .notice-meta {
+    font-size: 13px;
+    color: #999;
+  }
+
+  .warning-box {
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 20px 0;
+  }
+
+  .warning-text {
+    color: #856404;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="delete-container">
+  <div class="delete-box">
+
+    <!-- 경고 아이콘 -->
+    <div class="delete-icon">⚠️</div>
+
+    <!-- 제목 -->
+    <h2>정말 이 공지사항을 삭제하시겠습니까?</h2>
+
+    <!-- 공지 정보 -->
+    <div class="notice-info">
+      <div class="notice-info-label">삭제할 공지사항</div>
+      <div class="notice-title">"{{ notice.title }}"</div>
+      <div class="notice-meta">
+        작성자: {{ notice.author.name }} |
+        작성일: {{ notice.created_at|date:"Y.m.d H:i" }}
+      </div>
+    </div>
+
+    <!-- 경고 메시지 -->
+    <div class="warning-box">
+      <p class="warning-text">
+        <strong>⚠️ 주의:</strong> 삭제된 공지사항은 복구할 수 없습니다.<br>
+        삭제하시려면 아래 '삭제' 버튼을 클릭하세요.
+      </p>
+    </div>
+
+    <!-- 버튼 -->
+    <form method="post" style="display: inline;">
+      {% csrf_token %}
+      <div class="btn-group">
+        <button type="submit" class="btn btn-danger">
+          🗑️ 삭제
+        </button>
+        <a href="{% url 'classroom:my_course_detail' course.course_id %}" class="btn btn-secondary">
+          취소
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -30,6 +30,8 @@ urlpatterns = [
     path('community/', views.community_view, name='community'),
     path('course/', views.courses_view, name='courses'),
     path('find_id/', views.find_id_view, name='find_id'),
+    path('dimc/results/', views.dimc_results_view, name='dimc_results'),
+
 
     # 👇 비밀번호 재설정 절차 (URL 경로 수정)
     path('password-reset/',
