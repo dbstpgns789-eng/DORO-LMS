@@ -31,10 +31,10 @@ class Course(models.Model):
     )
 
     CATEGORY_CHOICES = [
-        ('programming', '프로그래밍'),
-        ('design', '디자인'),
-        ('business', '비즈니스'),
-        ('language', '외국어'),
+        ('Digital', '디지털'),
+        ('AI', 'AI'),
+        ('Making', '메이킹'),
+        ('Computing', '컴퓨팅'),
         ('general', '일반'),
     ]
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='general')

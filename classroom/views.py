@@ -252,23 +252,20 @@ def grade_submission_view(request, submission_id):
     return render(request, 'classroom/grade_submission.html', context)
 
 
-
-
-
 @login_required
 def calendar_view(request):
-    """캘린더 뷰"""
+    """캘린더 뷰 (수정됨: 과제 마감일 표시 기능 수정)"""
     user = request.user
-    # 👇 ongoing_courses 추가
+
+    # 1. 수강 중인 강의 목록
     ongoing_courses = Enrollment.objects.filter(
         student=request.user
     ).select_related('course', 'course__instructor').order_by('-enrolled_at')
 
-    # 현재 연도/월 또는 요청된 연도/월
+    # 연도/월 계산
     year = int(request.GET.get('year', datetime.now().year))
     month = int(request.GET.get('month', datetime.now().month))
 
-    # 이전/다음 월 계산
     if month == 1:
         prev_year, prev_month = year - 1, 12
     else:
@@ -279,42 +276,49 @@ def calendar_view(request):
     else:
         next_year, next_month = year, month + 1
 
-    # 해당 월의 캘린더 생성
-    cal_obj = cal.Calendar(firstweekday=6)  # 일요일 시작
+    cal_obj = cal.Calendar(firstweekday=6)
     month_days = cal_obj.monthdatescalendar(year, month)
 
-    # 사용자의 수강 강의
     user_courses = [e.course for e in ongoing_courses]
 
-    # 각 날짜에 강의 매핑
+    # [중요] 2. 과제 데이터를 여기서 미리 가져와야 합니다!
+    my_assignments = Assignment.objects.filter(course__in=user_courses)
+
     calendar_weeks = []
     for week in month_days:
         week_data = []
         for day in week:
+            # (1) 강의 스케줄 로직
             day_courses = []
-
-            # 해당 날짜의 요일과 매칭되는 강의 찾기
             weekday = day.weekday()
-            if weekday == 6:  # 일요일은 0으로 변환
+            if weekday == 6:
                 weekday = 0
             else:
                 weekday += 1
 
             for course in user_courses:
                 if course.weekday == weekday:
-                    # 강의 기간 확인
                     if course.start_date <= day <= course.end_date:
                         day_courses.append(course)
+
+            # (2) 과제 마감일 로직 (여기가 수정되었습니다)
+            day_assignments_list = []  # 이름 변경 (혼동 방지)
+
+            # [중요] 빈 리스트가 아니라, 위에서 가져온 'my_assignments'를 반복해야 합니다.
+            for assignment in my_assignments:
+                if assignment.due_date and assignment.due_date.date() == day:
+                    day_assignments_list.append(assignment)
 
             week_data.append({
                 'day': day.day,
                 'is_current_month': day.month == month,
                 'courses': day_courses,
+                'assignments': day_assignments_list,  # 템플릿으로 전달
             })
         calendar_weeks.append(week_data)
 
     context = {
-        'ongoing_courses': ongoing_courses,  # 👈 추가
+        'ongoing_courses': ongoing_courses,
         'year': year,
         'month': month,
         'prev_year': prev_year,

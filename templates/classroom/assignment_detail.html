@@ -4,19 +4,20 @@
 {% block title %}{{ assignment.title }} | 과제{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <div class="hero-inner">
-    <h1 class="hero-title">📝 {{ assignment.title }}</h1>
-    <p class="hero-sub">{{ assignment.course.title }}</p>
-  </div>
-</section>
-
-<main class="card-wrap">
+<main class="card-wrap" style="padding-top: 60px; padding-bottom: 60px;">
   <div class="card-inner">
 
     <article style="max-width: 900px; margin: 0 auto;">
 
-      <!-- 과제 정보 -->
+      <div style="margin-bottom: 30px;">
+        <h1 style="font-size: 32px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+          📝 {{ assignment.title }}
+        </h1>
+        <p style="font-size: 16px; color: #666; font-weight: 500;">
+          {{ assignment.course.title }}
+        </p>
+      </div>
+
       <section style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
         <div style="display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px;">
           <div>
@@ -39,7 +40,6 @@
         </div>
       </section>
 
-      <!-- 첨부 파일 (강사가 올린 PDF 등) -->
       {% if assignment.attachment %}
       <section style="margin-bottom: 30px;">
         <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">📎 첨부 파일</h2>
@@ -51,7 +51,6 @@
       </section>
       {% endif %}
 
-      <!-- 과제 설명 -->
       <section style="margin-bottom: 40px;">
         <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 15px;">📋 과제 내용</h2>
         <div style="line-height: 1.8; white-space: pre-wrap; padding: 20px; background-color: #fff; border: 1px solid #dee2e6; border-radius: 8px;">
@@ -59,7 +58,6 @@
         </div>
       </section>
 
-      <!-- 제출 상태 -->
       <section style="border: 2px solid {% if submission %}#28a745{% else %}#ffc107{% endif %}; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
         <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 15px;">
           {% if submission %}
@@ -105,7 +103,6 @@
           {% endif %}
         </div>
 
-        <!-- 학생만 재제출 버튼 -->
         {% if request.user != assignment.course.instructor and request.user.role != 'manager' %}
         <a href="{% url 'classroom:submit_assignment' assignment.assignment_id %}" style="display: inline-block; padding: 10px 20px; background-color: #0d6efd; color: white; text-decoration: none; border-radius: 5px;">
           📝 재제출하기
@@ -121,7 +118,6 @@
         {% endif %}
       </section>
 
-      <!-- 하단 버튼 -->
       <div style="padding-top: 20px; border-top: 1px solid #dee2e6; display:flex; justify-content:space-between; align-items:center;">
         <a href="{% url 'classroom:my_course_detail' assignment.course.course_id %}"
            style="display: inline-block; padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px;">

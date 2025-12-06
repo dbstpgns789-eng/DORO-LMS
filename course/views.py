@@ -60,6 +60,12 @@ def course_create_view(request):
             course = form.save(commit=False)
             course.instructor = request.user
             course.save()
+
+            Enrollment.objects.create(
+                student=request.user,  # 현재 로그인한 강사
+                course=course,
+            )
+
             messages.success(request, f'✅ "{course.title}" 강의가 등록되었습니다.')
             return redirect('course:course_detail', course_id=course.course_id)
     else:
@@ -105,6 +111,7 @@ def course_delete_view(request, course_id):
         course_title = course.title
         course.is_active = False  # 소프트 삭제
         course.save()
+
         messages.success(request, f'"{course_title}" 강의가 삭제되었습니다.')
         return redirect('course:course_list')
 

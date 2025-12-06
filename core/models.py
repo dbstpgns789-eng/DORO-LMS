@@ -24,7 +24,7 @@ class CalendarEvent(models.Model):
         return self.title
 
 # 커뮤니티 게시판
-class CommunityBoard(models.Model):
+'''class CommunityBoard(models.Model):
     board_id = models.AutoField(primary_key=True)
     board_title = models.CharField(max_length=100, verbose_name="게시판 제목")
     board_type = models.CharField(max_length=20, verbose_name="게시판 유형")
@@ -96,4 +96,4 @@ class Notification(models.Model):
         verbose_name_plural = '알림 목록'
 
     def __str__(self):
-        return f"[{self.notification_type}] {self.message[:30]}..."
+        return f"[{self.notification_type}] {self.message[:30]}..."'''

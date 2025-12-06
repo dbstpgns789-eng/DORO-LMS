@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "course",
     "board",
     "classroom",
+    "support"
 ]
 
 MIDDLEWARE = [
@@ -92,14 +93,13 @@ CHANNEL_LAYERS = {
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": 'mydb',
+        "NAME": 'test1',
         "USER": 'postgres',
         "PASSWORD": '1234',
         "HOST": 'localhost',
         "PORT": '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

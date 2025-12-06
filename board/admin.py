@@ -1,7 +1,7 @@
 # board/admin.py
 
 from django.contrib import admin
-from .models import Notice
+from .models import Notice, CommunityBoard
 from django.utils.html import format_html
 
 
@@ -47,3 +47,18 @@ class NoticeAdmin(admin.ModelAdmin):
         if not change:
             obj.author = request.user
         super().save_model(request, obj, form, change)
+
+
+@admin.register(CommunityBoard)
+class CommunityBoardAdmin(admin.ModelAdmin):
+    # 목록에서 보여줄 필드 설정
+    list_display = ['board_id', 'board_title', 'board_type']
+
+    # 검색 기능 활성화
+    search_fields = ['board_title', 'board_type']
+
+    # 제목 순으로 정렬
+    ordering = ['board_title']
+
+    # board_id는 자동 생성되므로 읽기 전용으로 설정
+    readonly_fields = ['board_id']

@@ -25,6 +25,32 @@
     </main>
   </div>
 
+  <script>
+      /**
+       * 고객지원 페이지를 팝업 창으로 엽니다.
+       */
+      function openSupportPopup(event) {
+          // 기본 동작(페이지 이동) 방지
+          if (event) {
+              event.preventDefault();
+          }
+
+          // 팝업 창 크기 및 위치 설정
+          const width = 800;
+          const height = 700;
+
+          // 화면 중앙 좌표 계산
+          const left = (window.screen.width / 2) - (width / 2);
+          const top = (window.screen.height / 2) - (height / 2);
+
+          // 새 창(팝업)으로 고객지원 페이지 열기.
+          window.open(
+              '/support/', // 고객지원 페이지 URL
+              'DoroSupport',
+              `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
+          );
+      }
+  </script>
 </body>
 <!-- 👇 이 부분 전체 삭제 -->
 <!--

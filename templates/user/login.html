@@ -23,19 +23,24 @@
         <span class="logo-text"><b>DORO</b> | LMS</span>
       </div>
 
+      {# --- [수정된 부분 시작] --- #}
       {% if messages %}
-  <div class="messages">
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  </div>
-{% endif %}
+        <div class="messages">
+          {% for message in messages %}
+            {# 로그인 화면에서는 'success' 메시지는 숨기고, 에러 메시지만 보여줍니다 #}
+            {% if 'success' not in message.tags %}
+              <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      {# --- [수정된 부분 끝] --- #}
 
       <form method="post" class="login-form" action="{% url 'user:login' %}" novalidate>
         {% csrf_token %}
-        
+
         {{ form.non_field_errors }}
 
         <div class="field">
@@ -58,10 +63,12 @@
       </form>
 
       <div class="login-links">
-  <a href="{% url 'user:signup' %}">회원가입</a>
-  <a href="{% url 'user:find_id' %}">ID 찾기</a>
-  <a href="{% url 'user:password_reset' %}">비밀번호 찾기</a>
-</div>
+        <a href="{% url 'user:signup' %}">회원가입</a>
+        <a href="{% url 'user:find_id' %}">ID 찾기</a>
+        <a href="{% url 'user:password_reset' %}">비밀번호 찾기</a>
+      </div>
     </section>
 
-  </div></main>{% endblock %}
+  </div>
+</main>
+{% endblock %}
