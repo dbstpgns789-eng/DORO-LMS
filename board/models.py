@@ -59,6 +59,9 @@ class CommunityPost(models.Model):
     open = models.BooleanField(default=True, verbose_name="공개 여부")
     view = models.IntegerField(default=0, verbose_name="조회수")
 
+    def get_active_comments_count(self):
+        return self.communitycomment_set.filter(is_deleted=False).count()
+
     class Meta:
         db_table = 'community_post'
         verbose_name = '커뮤니티 게시글'
@@ -73,9 +76,13 @@ class CommunityComment(models.Model):
     post = models.ForeignKey(CommunityPost, on_delete=models.CASCADE, verbose_name="게시글")
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="작성자")
     comment_content = models.TextField(verbose_name="댓글 내용")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="생성 일시")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="생성일시")
 
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+    is_deleted = models.BooleanField(default=False, verbose_name="삭제 여부")
+
+    def has_active_replies(self):
+        return self.replies.filter(is_deleted=False).exists()
 
     class Meta:
         db_table = 'community_comment'

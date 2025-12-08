@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/mypage.css' %}?v=20251128_2">
 
 <style>
-  /* DIMC 아카이브 페이지 전용 보정: 3번째 메뉴 위치 강제 */
+  /* 메뉴 위치 보정 */
   #menuItem3{
     position:absolute !important;
     left:238px !important;
@@ -18,7 +18,7 @@
     text-decoration:none;
   }
 
-  /* === 이 페이지 전용 infoBox 스타일 (점수/파일 업로드 폼) === */
+  /* infoBox 스타일 */
   #infoBox {
       position: absolute;
       left: 490px;
@@ -109,15 +109,15 @@
       background: #fff;
   }
 
-  .form-textarea {
+  /* 결과 표시용 스타일 추가 */
+  .result-display {
       flex: 1;
-      height: 80px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      padding: 10px;
-      resize: none;
-      font-family: sans-serif;
-      font-size: 14px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: bold;
+      color: #5651E9;
   }
 
   .file-row {
@@ -172,7 +172,6 @@
   <div id="bgMypage"></div>
   <h1 id="pageTitle">마이페이지</h1>
 
-  <!-- 사이드 메뉴 -->
   <div id="menuTitle">메뉴</div>
   <div id="menuBox"></div>
   <div id="menuLine1"></div>
@@ -181,13 +180,12 @@
   <a id="menuItem2" href="{% url 'user:DIMC_archive' %}">DIMC 아카이브</a>
   <a id="menuItem3" href="{% url 'user:dimc_results' %}">DIMC 업로드 내역</a>
 
-  <!-- 우측 업로드 폼 -->
   <section id="infoBox">
       <div id="archiveTitle">결과지 업로드</div>
 
       <div id="archiveSub">
-          DIMC 진단 결과지를 업로드하여 아카이브에 보관할 수 있습니다.<br>
-          점수와 결과를 입력하고 파일을 선택한 뒤 저장해 주세요.
+          DIMC 진단 점수를 입력하면 <strong>결과 유형이 자동으로 계산</strong>됩니다.<br>
+          점수를 확인하고 결과지 파일을 선택한 뒤 저장해 주세요.
       </div>
 
       <div id="archivePanel">
@@ -196,27 +194,29 @@
 
               <div class="form-row">
                   <label class="dimc-badge badge-d">D (Digital)</label>
-                  <input type="number" name="D_score" class="form-input" min="0" required>
+                  <input type="number" name="D_score" id="D_score" class="form-input calc-target" min="0" max="100" required>
               </div>
 
               <div class="form-row">
                   <label class="dimc-badge badge-i">I (AI)</label>
-                  <input type="number" name="I_score" class="form-input" min="0" required>
+                  <input type="number" name="I_score" id="I_score" class="form-input calc-target" min="0" max="100" required>
               </div>
 
               <div class="form-row">
                   <label class="dimc-badge badge-m">M (Making)</label>
-                  <input type="number" name="M_score" class="form-input" min="0" required>
+                  <input type="number" name="M_score" id="M_score" class="form-input calc-target" min="0" max="100" required>
               </div>
 
               <div class="form-row">
                   <label class="dimc-badge badge-c">C (Computing)</label>
-                  <input type="number" name="C_score" class="form-input" min="0" required>
+                  <input type="number" name="C_score" id="C_score" class="form-input calc-target" min="0" max="100" required>
               </div>
 
               <div class="form-row">
-                  <label class="form-label">테스트 결과</label>
-                  <textarea name="result" class="form-textarea" placeholder="결과 내용을 입력하세요"></textarea>
+                  <label class="form-label">판정 결과</label>
+                  <div id="shark_result_text" class="result-display">
+                      점수를 입력해주세요
+                  </div>
               </div>
 
               <div class="file-row">
@@ -235,4 +235,76 @@
       </div>
   </section>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('.calc-target');
+    const resultText = document.getElementById('shark_result_text');
+
+    inputs.forEach(input => {
+        input.addEventListener('input', calculateShark);
+    });
+
+    function calculateShark() {
+        // 👇 수정됨: ID를 대문자로 변경하여 값을 가져옴
+        const d = parseInt(document.getElementById('D_score').value) || 0;
+        const i = parseInt(document.getElementById('I_score').value) || 0;
+        const m = parseInt(document.getElementById('M_score').value) || 0;
+        const c = parseInt(document.getElementById('C_score').value) || 0;
+
+        const scores = { 'D': d, 'I': i, 'M': m, 'C': c };
+        const vals = Object.values(scores);
+
+        // 95점, 90점 이상 개수
+        const count95 = vals.filter(v => v >= 95).length;
+        const count90 = vals.filter(v => v >= 90).length;
+
+        let sharkName = "";
+
+        if (count95 >= 4) {
+            sharkName = "백상아리";
+        } else if (count95 >= 2) {
+            sharkName = "청상아리";
+        } else if (count90 >= 2) {
+            sharkName = "고래상어";
+        } else {
+            // 가장 높은 점수 찾기 (동점일 경우 D, I, M, C 순)
+            let maxVal = -1;
+            let maxKey = '';
+            for (const [key, val] of Object.entries(scores)) {
+                if (val > maxVal) {
+                    maxVal = val;
+                    maxKey = key;
+                }
+            }
+
+            if (maxVal >= 90) {
+                if (maxKey === 'D') sharkName = "그린란드 상어";
+                else if (maxKey === 'I') sharkName = "레몬 상어";
+                else if (maxKey === 'M') sharkName = "망치 상어";
+                else if (maxKey === 'C') sharkName = "뱀 상어";
+            } else if (maxVal >= 75) {
+                if (maxKey === 'D') sharkName = "넓은 주둥이 상어";
+                else if (maxKey === 'I') sharkName = "파자마 상어";
+                else if (maxKey === 'M') sharkName = "톱 상어";
+                else if (maxKey === 'C') sharkName = "천사 상어";
+            } else if (maxVal >= 50) {
+                if (maxKey === 'D') sharkName = "모래 상어";
+                else if (maxKey === 'I') sharkName = "애플렛 상어";
+                else if (maxKey === 'M') sharkName = "너스 상어";
+                else if (maxKey === 'C') sharkName = "암초 상어";
+            } else {
+                sharkName = "아기 상어";
+            }
+        }
+
+        // 입력값이 하나라도 있을 때만 결과 표시
+        if (d+i+m+c > 0) {
+            resultText.innerText = sharkName;
+        } else {
+            resultText.innerText = "점수를 입력해주세요";
+        }
+    }
+});
+</script>
 {% endblock %}

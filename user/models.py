@@ -78,7 +78,7 @@ class DIMC(models.Model):
     I_score = models.IntegerField(verbose_name="I 점수")
     M_score = models.IntegerField(verbose_name="M 점수")
     C_score = models.IntegerField(verbose_name="C 점수")
-    result = models.TextField(verbose_name="테스트 결과")
+    result = models.TextField(verbose_name="테스트 결과", blank=True)
     tested_at = models.DateTimeField(auto_now_add=True, verbose_name="테스트 일시")
 
     class Meta:

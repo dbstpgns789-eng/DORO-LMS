@@ -11,10 +11,10 @@ from .forms import UserUpdateForm, DIMCForm
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
-from django.contrib import messages  # 👈 [추가] 메시지 프레임워크
-
+from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 from .decorators import staff_or_instructor_required
-
 
 User = get_user_model()
 
@@ -153,6 +153,7 @@ def signup_complete_view(request):
     print("✅ signup_complete.html 렌더링")
     return render(request, 'user/signup_complete.html')
 
+
 def login_view(request):
     """로그인 뷰"""
     if request.method == 'POST':
@@ -163,7 +164,6 @@ def login_view(request):
             user = authenticate(request, username=email, password=password)
 
             if user is not None:
-                # 👇 [추가] 이메일 인증 여부 확인
                 if not user.email_verified:
                     messages.error(request, '이메일 인증을 완료해주세요. 가입 시 받은 인증 메일을 확인해주세요.')
                     return render(request, 'user/login.html', {'form': form})
@@ -185,7 +185,6 @@ def logout_view(request):
     return redirect('index')
 
 
-# 나머지 함수들은 그대로 유지...
 def dimc_results_view(request):
     """로그인한 사용자의 DIMC 아카이브 목록"""
     user_results = DIMC.objects.filter(student=request.user).order_by('-tested_at')
@@ -228,17 +227,68 @@ def user_delete_view(request):
     return render(request, 'user/mypage_delete.html')
 
 
+def calculate_shark_type(d, i, m, c):
+    scores = {'D': d, 'I': i, 'M': m, 'C': c}
+
+    # 조건 카운트
+    count_95 = sum(1 for v in scores.values() if v >= 95)
+    count_90 = sum(1 for v in scores.values() if v >= 90)
+
+    # 1. 모든 역량 95% 이상
+    if count_95 >= 4:
+        return "백상아리"
+
+    # 2. 두 가지 역량 95% 이상
+    if count_95 >= 2:
+        return "청상아리"
+
+    # 3. 두 가지 역량 90% 이상
+    if count_90 >= 2:
+        return "고래상어"
+
+    # 4. 한 가지 역량 기준 (가장 높은 점수)
+    max_type = max(scores, key=scores.get)
+    max_score = scores[max_type]
+
+    if max_score >= 90:
+        mapping = {'D': '그린란드 상어', 'I': '레몬 상어', 'M': '망치 상어', 'C': '뱀 상어'}
+        return mapping[max_type]
+    elif max_score >= 75:
+        mapping = {'D': '넓은 주둥이 상어', 'I': '파자마 상어', 'M': '톱 상어', 'C': '천사 상어'}
+        return mapping[max_type]
+    elif max_score >= 50:
+        mapping = {'D': '모래 상어', 'I': '애플렛 상어', 'M': '너스 상어', 'C': '암초 상어'}
+        return mapping[max_type]
+
+    # 5. 50% 미만
+    return "아기 상어"
+
+
 @login_required
 def DIMC_archive_view(request):
     if request.method == 'POST':
-        # ✅ 여기에서 request.FILES 까지 같이 넣어줘야 파일이 저장됨
+        print("📝 DIMC 저장 요청 받음")  # 디버깅용 로그
+
         form = DIMCForm(request.POST, request.FILES)
         if form.is_valid():
             dimc = form.save(commit=False)
             dimc.student = request.user
+
+            # ✅ HTML과 맞춰 대문자 키(D_score 등)로 데이터 가져오기
+            d_score = form.cleaned_data.get('D_score', 0)
+            i_score = form.cleaned_data.get('I_score', 0)
+            m_score = form.cleaned_data.get('M_score', 0)
+            c_score = form.cleaned_data.get('C_score', 0)
+
+            # 계산된 결과를 모델 인스턴스에 저장
+            dimc.result = calculate_shark_type(d_score, i_score, m_score, c_score)
+
             dimc.save()
-            # 저장 후 업로드 내역 페이지로 이동
+            print(f"✅ DIMC 결과 저장 완료: {dimc.result}")
             return redirect('user:dimc_results')
+        else:
+            print("❌ 폼 유효성 검사 실패")
+            print(form.errors)  # 에러 로그 확인
     else:
         form = DIMCForm()
 
@@ -276,6 +326,24 @@ def find_id_view(request):
     return render(request, 'user/find_id.html', context)
 
 
+@require_POST
+def check_email(request):
+    """
+    FormData 방식으로 이메일 중복 확인
+    """
+    try:
+        email = request.POST.get('email')
 
+        if not email:
+            return JsonResponse({'error': '이메일이 입력되지 않았습니다.'}, status=400)
 
+        User = get_user_model()
 
+        if User.objects.filter(email=email.strip()).exists():
+            return JsonResponse({'is_duplicate': True})
+        else:
+            return JsonResponse({'is_duplicate': False})
+
+    except Exception as e:
+        print(f"중복 확인 에러: {e}")
+        return JsonResponse({'error': '서버 내부 오류'}, status=500)

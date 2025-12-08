@@ -19,16 +19,13 @@
           {% if not post.open %}
             <span style="color: #dc3545; font-size: 0.8em; vertical-align: middle;">🔒</span>
           {% endif %}
-
           {% if post.board %}
             <span style="color: #0d6efd; font-size: 0.8em; margin-right: 5px;">
               [{{ post.get_board_display|default:post.board }}]
             </span>
           {% endif %}
-
           {{ post.post_title }}
         </h2>
-
         <div style="display: flex; gap: 20px; color: #6c757d; font-size: 14px; margin-top: 15px;">
           <span>👤 {{ post.author.name }}</span>
           <span>📅 {{ post.created_at|date:"Y년 m월 d일 H:i" }}</span>
@@ -42,14 +39,12 @@
         <a href="{% url 'board:community_list' %}" style="display: inline-block; padding: 8px 16px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px; font-size: 14px;">
           ← 목록으로
         </a>
-
         <div style="display: flex; gap: 8px;">
           {% if request.user == post.author %}
           <a href="{% url 'board:community_update' post.post_id %}" style="display: inline-block; padding: 8px 16px; background-color: #0d6efd; color: white; text-decoration: none; border-radius: 5px; font-size: 14px;">
             ✏️ 수정
           </a>
           {% endif %}
-
           {% if request.user == post.author or request.user.role == 'manager' %}
           <a href="{% url 'board:community_delete' post.post_id %}" style="display: inline-block; padding: 8px 16px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 5px; font-size: 14px;">
             🗑️ 삭제
@@ -60,72 +55,93 @@
 
       <section class="comment-section" style="margin-top: 40px;">
         <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 15px;">
-          댓글 <span style="color: #0d6efd;">{{ post.communitycomment_set.count }}</span>
+          댓글 <span style="color: #0d6efd;">{{ active_count }}</span>
         </h3>
 
         <ul style="list-style: none; padding: 0; margin-bottom: 30px;">
           {% for comment in post.communitycomment_set.all %}
             {% if not comment.parent %}
 
+            {% if not comment.is_deleted or comment.has_active_replies %}
+
             <li style="border-bottom: 1px solid #f1f3f5; padding: 15px 0;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
-                <div>
-                  <strong style="font-size: 14px; color: #212529; margin-right: 8px;">{{ comment.author.name }}</strong>
-                  <span style="font-size: 12px; color: #868e96;">{{ comment.created_at|date:"Y-m-d H:i" }}</span>
+              {% if comment.is_deleted %}
+                <div style="padding: 10px 0; color: #adb5bd; font-size: 14px; font-style: italic;">
+                  삭제된 댓글입니다.
+                </div>
+              {% else %}
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
+                  <div>
+                    <strong style="font-size: 14px; color: #212529; margin-right: 5px;">{{ comment.author.name }}</strong>
+                    {% if comment.author == post.author %}
+                      <span style="font-size: 11px; color: #0d6efd; background: #e7f5ff; padding: 2px 5px; border-radius: 4px; margin-right: 8px; font-weight: bold;">작성자</span>
+                    {% else %}
+                      <span style="margin-right: 8px;"></span>
+                    {% endif %}
+                    <span style="font-size: 12px; color: #868e96;">{{ comment.created_at|date:"Y-m-d H:i" }}</span>
+                  </div>
+
+                  <div style="display: flex; gap: 8px;">
+                    {% if request.user.is_authenticated %}
+                    <button onclick="toggleReplyForm('{{ comment.pk }}')"
+                            style="background: none; border: none; color: #0d6efd; font-size: 12px; cursor: pointer; padding: 0;">
+                      답글
+                    </button>
+                    {% endif %}
+
+                    {% if request.user == comment.author or request.user.role == 'manager' %}
+                      <a href="{% url 'board:comment_delete' comment.pk %}"
+                         onclick="return confirm('정말 삭제하시겠습니까?');"
+                         style="font-size: 12px; color: #dc3545; text-decoration: none;">
+                         삭제
+                      </a>
+                    {% endif %}
+                  </div>
                 </div>
 
-                <div style="display: flex; gap: 8px;">
-                  {% if request.user.is_authenticated %}
-                  <button onclick="toggleReplyForm('{{ comment.pk }}')"
-                          style="background: none; border: none; color: #0d6efd; font-size: 12px; cursor: pointer; padding: 0;">
-                    답글
-                  </button>
-                  {% endif %}
+                <div style="white-space: pre-wrap; color: #495057; font-size: 14px;">{{ comment.comment_content }}</div>
 
-                  {% if request.user == comment.author or request.user.role == 'manager' %}
-                    <a href="{% url 'board:comment_delete' comment.pk %}"
+                <div id="reply-form-{{ comment.pk }}" style="display: none; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+                  <form action="{% url 'board:comment_create' post.post_id %}" method="post" style="display: flex; gap: 10px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent_id" value="{{ comment.pk }}">
+                    <textarea name="comment_content" required placeholder="답글 내용을 입력하세요." rows="2"
+                              style="flex: 1; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px; resize: none; font-size: 13px;"></textarea>
+                    <button type="submit" style="padding: 0 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer;">등록</button>
+                  </form>
+                </div>
+              {% endif %}
+            </li>
+
+            {% for reply in comment.replies.all %}
+              {% if not reply.is_deleted %}
+              <li style="border-bottom: 1px solid #f1f3f5; padding: 15px 0 15px 40px; background-color: #fafafa;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
+                  <div style="display: flex; align-items: center;">
+                    <span style="color: #adb5bd; margin-right: 8px;">↳</span>
+                    <strong style="font-size: 14px; color: #212529; margin-right: 5px;">{{ reply.author.name }}</strong>
+                    {% if reply.author == post.author %}
+                      <span style="font-size: 11px; color: #0d6efd; background: #e7f5ff; padding: 2px 5px; border-radius: 4px; margin-right: 8px; font-weight: bold;">작성자</span>
+                    {% else %}
+                      <span style="margin-right: 8px;"></span>
+                    {% endif %}
+                    <span style="font-size: 12px; color: #868e96;">{{ reply.created_at|date:"Y-m-d H:i" }}</span>
+                  </div>
+
+                  {% if request.user == reply.author or request.user.role == 'manager' %}
+                    <a href="{% url 'board:comment_delete' reply.pk %}"
                        onclick="return confirm('정말 삭제하시겠습니까?');"
                        style="font-size: 12px; color: #dc3545; text-decoration: none;">
                        삭제
                     </a>
                   {% endif %}
                 </div>
-              </div>
+                <div style="white-space: pre-wrap; color: #495057; font-size: 14px;">{{ reply.comment_content }}</div>
+              </li>
+              {% endif %}
+            {% endfor %}
 
-              <div style="white-space: pre-wrap; color: #495057; font-size: 14px;">{{ comment.comment_content }}</div>
-
-              <div id="reply-form-{{ comment.pk }}" style="display: none; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
-                <form action="{% url 'board:comment_create' post.post_id %}" method="post" style="display: flex; gap: 10px;">
-                  {% csrf_token %}
-                  <input type="hidden" name="parent_id" value="{{ comment.pk }}">
-
-                  <textarea name="comment_content" required placeholder="답글 내용을 입력하세요." rows="2"
-                            style="flex: 1; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px; resize: none; font-size: 13px;"></textarea>
-                  <button type="submit" style="padding: 0 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer;">등록</button>
-                </form>
-              </div>
-            </li>
-
-            {% for reply in comment.replies.all %}
-            <li style="border-bottom: 1px solid #f1f3f5; padding: 15px 0 15px 40px; background-color: #fafafa;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
-                <div style="display: flex; align-items: center;">
-                  <span style="color: #adb5bd; margin-right: 8px;">↳</span>
-                  <strong style="font-size: 14px; color: #212529; margin-right: 8px;">{{ reply.author.name }}</strong>
-                  <span style="font-size: 12px; color: #868e96;">{{ reply.created_at|date:"Y-m-d H:i" }}</span>
-                </div>
-
-                {% if request.user == reply.author or request.user.role == 'manager' %}
-                  <a href="{% url 'board:comment_delete' reply.pk %}"
-                     onclick="return confirm('정말 삭제하시겠습니까?');"
-                     style="font-size: 12px; color: #dc3545; text-decoration: none;">
-                     삭제
-                  </a>
-                {% endif %}
-              </div>
-              <div style="white-space: pre-wrap; color: #495057; font-size: 14px;">{{ reply.comment_content }}</div>
-            </li>
-            {% endfor %} {% endif %} {% empty %}
+            {% endif %} {% endif %} {% empty %}
             <li style="padding: 20px 0; text-align: center; color: #868e96;">작성된 댓글이 없습니다. 첫 댓글을 남겨보세요!</li>
           {% endfor %}
         </ul>

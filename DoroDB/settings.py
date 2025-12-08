@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import mimetypes
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -161,12 +162,12 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'semiexpansible-lawana-statolithic.ngrok-free.dev',  # 👈 ngrok 도메인 추가
+    'uncubical-minerva-unparochially.ngrok-free.dev',  # 👈 ngrok 도메인 추가
 
 ]
-SITE_DOMAIN = 'semiexpansible-lawana-statolithic.ngrok-free.dev'
+SITE_DOMAIN = 'uncubical-minerva-unparochially.ngrok-free.dev'
 
-CSRF_TRUSTED_ORIGINS = ['https://semiexpansible-lawana-statolithic.ngrok-free.dev']
+CSRF_TRUSTED_ORIGINS = ['https://uncubical-minerva-unparochially.ngrok-free.dev']
 # CSRF 보안 설정
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -176,3 +177,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'ohjun2001@gmail.com'
 EMAIL_HOST_PASSWORD = 'fjmrusxuyugwwqna'  # Gmail 앱 비밀번호
 DEFAULT_FROM_EMAIL = 'ohjun2001@gmail.com'
+
+mimetypes.add_type("application/pdf", ".pdf", True)

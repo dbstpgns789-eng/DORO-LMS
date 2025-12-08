@@ -1,85 +1,232 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}내 정보 수정{% endblock %}
+
 {% block extra_css %}
-  {# 마이페이지 공통 레이아웃 + 수정 폼 전용 CSS #}
-  <link rel="stylesheet" href="{% static 'css/mypage.css' %}?v=20251128_2">
-  <link rel="stylesheet" href="{% static 'css/mypage_update.css' %}?v=20251128_2">
+<link rel="stylesheet" href="{% static 'css/mypage.css' %}?v=20251128_2">
+
+<style>
+  /* === 1. 사이드바 메뉴 위치 고정 (이전 페이지들과 통일) === */
+  #menuItem1, #menuItem2 {
+    position: absolute;
+    left: 238px;
+    font-size: 20px;
+    color: #000;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  #menuItem1 { top: calc(var(--content-top, 0px) + 343px); } /* 내 정보 */
+  #menuItem2 { top: calc(var(--content-top, 0px) + 399px); } /* DIMC 아카이브 */
+  #menuItem3 { top: calc(var(--content-top, 0px) + 455px); } /* DIMC 업로드 내역 */
+
+  /* === 2. 내 정보 수정 카드 레이아웃 === */
+  #infoBox {
+    position: absolute;
+    left: 490px;
+    top: 321px;
+    width: 685px;
+    background: #fff;
+    border: 1px solid #CBC6C6; /* 테두리 추가 */
+    border-radius: 10px;
+    padding: 30px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #000;
+  }
+
+  /* === 3. 폼 내부 행(Row) 스타일 === */
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    min-height: 50px;
+  }
+
+  .lbl {
+    width: 120px;
+    font-weight: 600;
+    color: #333;
+    flex-shrink: 0;
+  }
+
+  .main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  /* === 4. 핵심: 보기/수정 모드 전환 로직 === */
+  /* 기본 상태: 입력창(.inputs) 숨김, 텍스트(.masked) 보임 */
+  .row .inputs { display: none; }
+  .row .masked { display: block; font-size: 15px; color: #555; }
+  .row input.text { display: none; } /* 일반 텍스트 인풋도 기본 숨김 */
+
+  /* 수정 상태(.editing): 입력창 보임, 텍스트 숨김 */
+  .row.editing .inputs { display: flex; align-items: center; gap: 5px; }
+  .row.editing .masked { display: none; }
+  .row.editing input.text { display: block; }
+
+  /* === 5. 입력창 디테일 === */
+  .inputs .ph, .inputs .yr, .inputs .mo, .inputs .dy {
+    height: 32px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  /* 👇 [수정됨] 50px -> 70px로 변경하여 4자리 숫자가 잘 보이게 함 */
+  .inputs .ph { width: 70px; }
+
+  .inputs .yr { width: 60px; }
+  .inputs .mo, .inputs .dy { width: 40px; }
+
+  .sep { margin: 0 4px; font-weight: bold; color: #999; }
+
+  input.text {
+    height: 32px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0 10px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  input.text.wide { max-width: 300px; }
+
+  /* 이메일은 disabled 상태 스타일 */
+  .row-email input.text {
+    display: block !important; /* 이메일은 항상 input 형태로 보여주되 */
+    background: #f9f9f9;
+    border: none;
+    color: #777;
+  }
+  .row-email .masked { display: none !important; }
+
+  /* === 6. 버튼 스타일 === */
+  .btn-mini {
+    padding: 5px 12px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  .btn-mini:hover { background: #f0f0f0; }
+  .btn-mini:disabled { opacity: 0.5; cursor: default; }
+
+  .form-actions {
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .btn-save {
+    background: #5651E9;
+    color: #fff;
+    border: none;
+    padding: 10px 40px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .btn-save:hover { opacity: 0.9; }
+
+  /* 화면에서 숨기기 (스크린 리더용 or 데이터 전송용) */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 <div id="canvas" role="main" aria-labelledby="pageTitle">
-  <!-- 마이페이지 상단 배너 -->
   <div id="bgMypage"></div>
   <h1 id="pageTitle">마이페이지</h1>
 
-  <!-- 좌측 메뉴 -->
   <div id="menuTitle">메뉴</div>
   <div id="menuBox"></div>
   <div id="menuLine1"></div>
   <div id="menuLine2"></div>
+
   <a id="menuItem1" href="{% url 'user:mypage' %}">내 정보</a>
   <a id="menuItem2" href="{% url 'user:DIMC_archive' %}">DIMC 아카이브</a>
+  <a id="menuItem3" href="{% url 'user:dimc_results' %}">DIMC 업로드 내역</a>
 
-  <!-- 우측 카드: 내 정보 수정 -->
   <div id="infoBox">
     <h2 class="card-title">내 정보 수정</h2>
 
     <form id="editForm" method="post" novalidate>
       {% csrf_token %}
-
-      {# name 필드가 필수라면: 숨김으로 현재값 유지 #}
       <input type="hidden" name="name" value="{{ request.user.name|default_if_none:'' }}">
 
       <div class="panel">
 
-        {# 연락처 #}
+        {# 1. 연락처 #}
         <div class="row row-phone">
           <label class="lbl">연락처</label>
           <div class="main">
             <span class="masked">
               {% if request.user.phone_number %}
                 {% with pn=request.user.phone_number|cut:"-" %}
-                  {{ pn|slice:":3" }}-*****-{{ pn|slice:"-4:" }}
+                  {{ pn|slice:":3" }}-****-{{ pn|slice:"-4:" }}
                 {% endwith %}
-              {% else %}010-*****-0000{% endif %}
+              {% else %}010-****-0000{% endif %}
             </span>
 
             <div class="inputs phone">
-              <input type="text" inputmode="numeric" maxlength="3" class="ph" id="ph1" aria-label="국번">
+              <input type="text" inputmode="numeric" maxlength="3" class="ph" id="ph1">
               <span class="sep">-</span>
-              <input type="text" inputmode="numeric" maxlength="4" class="ph" id="ph2" aria-label="중간번호">
+              <input type="text" inputmode="numeric" maxlength="4" class="ph" id="ph2">
               <span class="sep">-</span>
-              <input type="text" inputmode="numeric" maxlength="4" class="ph" id="ph3" aria-label="끝번호">
+              <input type="text" inputmode="numeric" maxlength="4" class="ph" id="ph3">
             </div>
           </div>
-
           <button type="button" class="btn-mini js-edit" data-focus="#ph1">수정</button>
 
-          {# 서버 전송용 원본 값 #}
           <input type="tel" name="phone_number" id="phoneRaw" class="sr-only"
                  value="{{ request.user.phone_number|default_if_none:'' }}">
         </div>
 
-        {# 이메일(아이디) : 보기만 #}
+        {# 2. 이메일 (수정 불가) #}
         <div class="row row-email">
           <label class="lbl">이메일(아이디)</label>
           <div class="main">
-            <span class="masked">
-              {% if request.user.email %}{{ request.user.email }}{% else %}-{% endif %}
-            </span>
             <input class="text" type="email" value="{{ request.user.email }}" disabled>
           </div>
-          <button type="button" class="btn-mini" disabled>수정</button>
+          <button type="button" class="btn-mini" disabled style="opacity:0;">수정</button>
         </div>
 
-        {# 주소 #}
+        {# 3. 주소 #}
         <div class="row row-addr">
           <label class="lbl">주소</label>
           <div class="main">
             <span class="masked">
               {% if request.user.address %}
-                {{ request.user.address|slice:":5" }}******
+                {{ request.user.address|slice:":10" }}...
               {% else %}-{% endif %}
             </span>
             <input class="text wide" type="text" id="addr" name="address"
@@ -89,14 +236,14 @@
           <button type="button" class="btn-mini js-edit" data-focus="#addr">수정</button>
         </div>
 
-        {# 생년월일 #}
+        {# 4. 생년월일 #}
         <div class="row row-birth">
           <label class="lbl">생년월일</label>
           <div class="main">
             <span class="masked">
               {% if request.user.birthday %}
-                {{ request.user.birthday|date:"Y" }}-**-**
-              {% else %}20**-**-**{% endif %}
+                {{ request.user.birthday|date:"Y-m-d" }}
+              {% else %}YYYY-MM-DD{% endif %}
             </span>
 
             <div class="inputs birth" id="birthInputs">
@@ -107,10 +254,8 @@
               <input type="text" inputmode="numeric" maxlength="2" class="dy" id="bd" placeholder="DD">
             </div>
           </div>
-
           <button type="button" class="btn-mini js-edit" data-focus="#by">수정</button>
 
-          {# 서버 전송용 원본 값 #}
           <input type="hidden" name="birthday" id="birthRaw"
                  value="{% if request.user.birthday %}{{ request.user.birthday|date:'Y-m-d' }} 00:00:00{% endif %}">
         </div>
@@ -126,7 +271,7 @@
 
 <script>
 (function(){
-  // ===== [A] "수정" 버튼 토글 =====
+  // [A] "수정" 버튼 클릭 시 클래스(.editing) 토글
   const allRows = Array.from(document.querySelectorAll('#infoBox .row'));
 
   document.querySelectorAll('#infoBox .btn-mini.js-edit').forEach(btn => {
@@ -134,23 +279,24 @@
       const row = btn.closest('.row');
       if (!row) return;
 
-      // 한 번에 한 줄만 편집
+      // 다른 줄은 수정 모드 해제 (한 번에 한 줄만)
       allRows.forEach(r => { if (r !== row) r.classList.remove('editing'); });
 
+      // 현재 줄 토글
       row.classList.toggle('editing');
 
-      // 포커스 이동
+      // 수정 모드가 되면 해당 인풋으로 포커스 이동
       if (row.classList.contains('editing')) {
         const sel = btn.dataset.focus;
         if (sel) {
-          const target = row.querySelector(sel) || document.querySelector(sel);
+          const target = row.querySelector(sel);
           if (target) target.focus();
         }
       }
     });
   });
 
-  // ===== [B] 폰/생년월일 입력 보조 + 전송값 조립 =====
+  // [B] 데이터 초기화 및 전송 준비
   const ph = ['ph1','ph2','ph3'].map(id => document.getElementById(id));
   const phoneRaw = document.getElementById('phoneRaw');
 
@@ -159,60 +305,68 @@
         bd = document.getElementById('bd'),
         birthRaw = document.getElementById('birthRaw');
 
-  // 기존값을 입력칸에도 채우기(값 보존)
+  // 1. 기존 DB 값을 쪼개서 인풋칸에 넣어두기
   if (phoneRaw && phoneRaw.value) {
     const parts = phoneRaw.value.trim().split('-');
     if (parts.length === 3) {
-      if (ph[0]) ph[0].value = parts[0] || '';
-      if (ph[1]) ph[1].value = parts[1] || '';
-      if (ph[2]) ph[2].value = parts[2] || '';
+      if (ph[0]) ph[0].value = parts[0];
+      if (ph[1]) ph[1].value = parts[1];
+      if (ph[2]) ph[2].value = parts[2];
     }
   }
   if (birthRaw && birthRaw.value) {
-    const m = birthRaw.value.trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (m) {
-      if (by) by.value = m[1];
-      if (bm) bm.value = m[2];
-      if (bd) bd.value = m[3];
+    // YYYY-MM-DD 포맷 가정
+    const val = birthRaw.value.trim();
+    // 날짜만 추출 (시간 제외)
+    const datePart = val.split(' ')[0];
+    const m = datePart.split('-');
+
+    if (m.length === 3) {
+      if (by) by.value = m[0];
+      if (bm) bm.value = m[1];
+      if (bd) bd.value = m[2];
     }
   }
 
-  // 숫자만 + 자동 다음칸
+  // 2. 숫자만 입력되도록 강제 & 자동 포커스 이동
   [ ...ph, by, bm, bd ].forEach(inp => {
     if (!inp) return;
     inp.addEventListener('input', e => {
-      e.target.value = e.target.value.replace(/[^0-9]/g,'');
+      e.target.value = e.target.value.replace(/[^0-9]/g,''); // 숫자만
+
       const max = e.target.maxLength || 0;
       if (max && e.target.value.length >= max) {
+        // 다음 칸으로 이동
         const order = [ ...ph, by, bm, bd ];
-        const i = order.indexOf(e.target);
-        if (i > -1 && order[i+1]) order[i+1].focus();
+        const idx = order.indexOf(e.target);
+        if (idx > -1 && order[idx+1]) order[idx+1].focus();
       }
     });
   });
 
-  // 제출 직전 값 조립
+  // 3. 폼 제출 시(submit) 흩어진 인풋들을 합쳐서 hidden input에 넣기
   document.getElementById('editForm').addEventListener('submit', () => {
-    // phone_number
+    // 전화번호 조립
     if (ph[0] && ph[1] && ph[2]) {
-      const p1 = ph[0].value.trim(),
-            p2 = ph[1].value.trim(),
-            p3 = ph[2].value.trim();
+      const p1 = ph[0].value.trim();
+      const p2 = ph[1].value.trim();
+      const p3 = ph[2].value.trim();
+      // 값이 다 있을 때만 업데이트
       if (p1 && p2 && p3) {
         phoneRaw.value = `${p1}-${p2}-${p3}`;
       }
-      // 세 칸 중 하나라도 비면 기존 phoneRaw 유지
     }
 
-    // birthday
+    // 생년월일 조립
     if (by && bm && bd) {
-      const y = by.value.padStart(4,'0'),
-            m = bm.value.padStart(2,'0'),
-            d = bd.value.padStart(2,'0');
-      if (/^\d{4}$/.test(y) && /^\d{2}$/.test(m) && /^\d{2}$/.test(d)) {
+      const y = by.value.trim();
+      const m = bm.value.trim().padStart(2,'0');
+      const d = bd.value.trim().padStart(2,'0');
+
+      if (y && m && d) {
+        // Django DateTimeField에 맞게 포맷
         birthRaw.value = `${y}-${m}-${d} 00:00:00`;
       }
-      // 형식 안 맞으면 기존 birthRaw 유지
     }
   });
 })();

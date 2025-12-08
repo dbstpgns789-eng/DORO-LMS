@@ -6,10 +6,8 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/mypage.css' %}?v=20251128_2">
 <style>
-  /* 이 페이지에서 사이드바 3개 메뉴 위치 통일 */
-  #menuItem1,
-  #menuItem2,
-  #menuItem3{
+  /* 사이드바 위치 (기존 유지) */
+  #menuItem1, #menuItem2, #menuItem3{
     position:absolute;
     left:238px;
     font-size:20px;
@@ -21,7 +19,7 @@
   #menuItem2{ top:calc(var(--content-top, 0px) + 399px); }
   #menuItem3{ top:calc(var(--content-top, 0px) + 455px); }
 
-  /* 우측 목록 카드만 살짝 꾸미기 */
+  /* 리스트 카드 스타일 */
   .dimc-list-card{
     position:absolute;
     left:490px;
@@ -34,39 +32,63 @@
     box-sizing:border-box;
     box-shadow:0 4px 10px rgba(0,0,0,.03);
   }
-  .dimc-list-title{
-    font-size:22px;
-    font-weight:700;
-    margin-bottom:8px;
+  .dimc-list-title{ font-size:22px; font-weight:700; margin-bottom:8px; }
+  .dimc-list-desc{ font-size:14px; color:#717070; margin-bottom:18px; }
+
+  /* === [추가됨] 계급도 바로가기 버튼 스타일 === */
+  .btn-rank-map {
+      position: absolute;
+      top: 28px;     /* 카드 상단 여백과 동일하게 맞춤 */
+      right: 24px;   /* 카드 우측 여백과 동일하게 맞춤 */
+      padding: 6px 14px;
+      background-color: #5651E9; /* 보라색 포인트 컬러 */
+      color: #fff;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.2s;
   }
-  .dimc-list-desc{
-    font-size:14px;
-    color:#717070;
-    margin-bottom:18px;
+  .btn-rank-map:hover {
+      background-color: #4650D5;
   }
-  .dimc-table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:14px;
-  }
+
+  /* 테이블 스타일 */
+  .dimc-table{ width:100%; border-collapse:collapse; font-size:14px; }
   .dimc-table thead th{
-    padding:8px;
+    padding:10px 8px;
     border-bottom:1px solid #ddd;
     background:#f8f9fa;
     text-align:center;
+    font-weight: 600;
   }
   .dimc-table tbody td{
-    padding:8px;
+    padding:12px 8px;
     border-bottom:1px solid #eee;
+    text-align: center;
+    vertical-align: middle;
   }
-  .dimc-table tbody td.num{
-    text-align:center;
+
+  /* 상어 결과 강조 */
+  .shark-result {
+      color: #5651E9;
+      font-weight: bold;
   }
-  .dimc-empty{
-    font-size:14px;
-    color:#999;
-    margin-top:4px;
+
+  .btn-view {
+      display: inline-block;
+      padding: 4px 12px;
+      background-color: #f1f3f5;
+      color: #4650D5;
+      border-radius: 4px;
+      font-size: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.2s;
   }
+  .btn-view:hover { background-color: #e9ecef; }
+
+  .dimc-empty{ font-size:14px; color:#999; margin-top:20px; text-align: center; }
 </style>
 {% endblock %}
 
@@ -75,7 +97,6 @@
   <div id="bgMypage"></div>
   <h1 id="pageTitle">마이페이지</h1>
 
-  <!-- 좌측 사이드바 (마이페이지와 동일) -->
   <div id="menuTitle">메뉴</div>
   <div id="menuBox"></div>
   <div id="menuLine1"></div>
@@ -84,44 +105,49 @@
   <a id="menuItem2" href="{% url 'user:DIMC_archive' %}">DIMC 아카이브</a>
   <a id="menuItem3" href="{% url 'user:dimc_results' %}">DIMC 업로드 내역</a>
 
-  <!-- 우측 업로드 내역 카드 -->
   <section class="dimc-list-card">
+    <a href="https://dimctest.com/rank" target="_blank" class="btn-rank-map">
+        계급도 확인
+    </a>
+
     <h2 class="dimc-list-title">업로드 내역</h2>
     <p class="dimc-list-desc">
-      내가 업로드한 DIMC 점수와 검사지를 한눈에 확인할 수 있습니다.
+      내가 업로드한 DIMC 점수와 분석 결과(상어 유형)를 확인하세요.
     </p>
 
     {% if results %}
     <table class="dimc-table">
       <thead>
         <tr>
-          <th>날짜</th>
-          <th>D</th>
-          <th>I</th>
-          <th>M</th>
-          <th>C</th>
-          <th>결과 요약</th>
-          <th>검사지</th>
+          <th style="width: 15%;">날짜</th>
+          <th style="width: 10%;">D</th>
+          <th style="width: 10%;">I</th>
+          <th style="width: 10%;">M</th>
+          <th style="width: 10%;">C</th>
+          <th style="width: 30%;">결과 유형</th>
+          <th style="width: 15%;">검사지</th>
         </tr>
       </thead>
       <tbody>
         {% for item in results %}
         <tr>
-          <td>{{ item.tested_at|date:"Y-m-d" }}</td>
-          <td class="num">{{ item.D_score }}</td>
-          <td class="num">{{ item.I_score }}</td>
-          <td class="num">{{ item.M_score }}</td>
-          <td class="num">{{ item.C_score }}</td>
-          <td style="max-width:200px;">
-            {{ item.result|truncatechars:40 }}
+          <td>{{ item.tested_at|date:"Y.m.d" }}</td>
+          <td>{{ item.D_score }}</td>
+          <td>{{ item.I_score }}</td>
+          <td>{{ item.M_score }}</td>
+          <td>{{ item.C_score }}</td>
+
+          <td>
+             <span class="shark-result">{{ item.result }}</span>
           </td>
-          <td class="num">
+
+          <td>
             {% if item.pdf_path %}
-              <a href="{{ item.pdf_path.url }}" target="_blank" style="color:#4650D5; font-weight:600;">
+              <a href="{{ item.pdf_path.url }}" target="_blank" class="btn-view">
                 보기
               </a>
             {% else %}
-              -
+              <span style="color:#ccc;">-</span>
             {% endif %}
           </td>
         </tr>

@@ -11,7 +11,7 @@ urlpatterns = [
     path('term/', views.term_view, name='term'),
     path('signup/', views.signup_view, name='signup'),
     path('complete/', views.signup_complete_view, name='signup_complete'),
-
+    path('check_email/', views.check_email, name='check_email'),
     # 👇 [추가] 이메일 인증 경로
     path('verify-email/<uuid:token>/', views.verify_email_view, name='verify_email'),
 

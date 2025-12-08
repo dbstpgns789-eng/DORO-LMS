@@ -1,7 +1,7 @@
 # board/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Notice, CommunityComment, CommunityBoard, CommunityPost
@@ -139,18 +139,25 @@ def community_list(request):
 def community_detail(request, post_id):
     post = get_object_or_404(CommunityPost, pk=post_id)
 
+    # ... (비공개 글 접근 제어 로직은 그대로 유지) ...
     if not post.open:
         if not request.user.is_authenticated:
-            return redirect('board:community_list')
+             return HttpResponse("<script>alert('로그인이 필요한 서비스입니다.'); location.href='/user/login/';</script>")
+        if post.author != request.user and request.user.role != 'manager':
+            return HttpResponse("<script>alert('비공개 게시글입니다.'); history.back();</script>")
 
-        if post.author != request.user and not request.user.is_manager():
-            return redirect('board:community_list')
-
-    # 조회수 증가 (본인 글이 아닐 때만 증가시키는 로직을 추가할 수도 있음)
+    # 조회수 증가
     post.view += 1
     post.save()
 
-    context = {'post': post}
+    # 👇 [추가] 삭제되지 않은 댓글만 카운트하기
+    active_count = post.communitycomment_set.filter(is_deleted=False).count()
+
+    # 👇 [수정] active_count를 context에 담아서 전달
+    context = {
+        'post': post,
+        'active_count': active_count
+    }
     return render(request, 'board/community_detail.html', context)
 
 
@@ -230,11 +237,12 @@ def comment_create(request, post_id):
 @login_required
 def comment_delete(request, comment_id):
     comment = get_object_or_404(CommunityComment, pk=comment_id)
-
     post_id = comment.post.post_id
 
-    if request.user == comment.author or request.user.is_manager():
-        comment.delete()
+    # 권한 확인
+    if request.user == comment.author or request.user.role == 'manager':
+        comment.is_deleted = True
+        comment.save()
     else:
         return redirect('board:community_detail', post_id=post_id)
 
