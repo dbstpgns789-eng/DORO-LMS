@@ -85,9 +85,26 @@ def course_update_view(request, course_id):
         return redirect('course:course_detail', course_id=course_id)
 
     if request.method == 'POST':
+        # request.FILES 필수!
         form = CourseForm(request.POST, request.FILES, instance=course)
+
         if form.is_valid():
-            form.save()
+            # 1. DB에 바로 저장하지 않고 인스턴스만 가져옴
+            course = form.save(commit=False)
+
+            # 2. 🔴 이미지 삭제 로직 추가
+            # HTML의 체크박스(name="image-clear")가 체크되었는지 확인
+            if request.POST.get('image-clear') == 'on':
+                # 기존 이미지가 있다면 파일 시스템에서도 삭제 (용량 절약)
+                if course.image:
+                    course.image.delete(save=False)
+
+                # DB 컬럼 값을 NULL로 설정
+                course.image = None
+
+            # 3. 최종 저장
+            course.save()
+
             messages.success(request, f'✅ "{course.title}" 강의가 수정되었습니다.')
             return redirect('course:course_detail', course_id=course_id)
     else:

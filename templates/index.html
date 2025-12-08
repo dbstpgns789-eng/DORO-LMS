@@ -8,7 +8,6 @@
 {% endblock %}
 
 {% block content %}
-  <!-- 상단 히어로 -->
   <section class="hero-banner">
     <div class="hero-inner">
       <h1 class="hero-title">당신의 학습을 위한<br><span>DORO LMS</span></h1>
@@ -16,10 +15,8 @@
     </div>
   </section>
 
-  <!-- 콘텐츠 메인 영역 -->
   <main class="main-content container">
 
-    <!-- 최신 강의 -->
     <section class="card ai-section">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h2 class="card-title" style="margin: 0;">🎓 최신 강의</h2>
@@ -45,7 +42,6 @@
                    onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'; this.style.transform='translateY(-5px)';"
                    onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)';">
 
-                <!-- 👇 이미지 또는 기본 아이콘 -->
                 {% if course.image %}
                   <img src="{{ course.image.url }}" alt="{{ course.title }}" style="width: 100%; height: 150px; object-fit: cover;">
                 {% else %}
@@ -54,7 +50,6 @@
                   </div>
                 {% endif %}
 
-                <!-- 강의 정보 -->
                 <div style="padding: 20px;">
                   <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #212529;">
                     {{ course.title }}
@@ -69,7 +64,6 @@
                     <span>👁️ {{ course.views }}</span>
                   </div>
 
-                  <!-- 강의 시간 정보 -->
                   {% if course.weekday is not None and course.start_time %}
                   <div style="font-size: 12px; color: #6c757d; margin-bottom: 12px; padding: 8px; background-color: #f8f9fa; border-radius: 5px; text-align: center;">
                     📅 {{ course.get_weekday_display }} {{ course.start_time|date:"H:i" }}
@@ -79,7 +73,6 @@
                   </div>
                   {% endif %}
 
-                  <!-- 카테고리 뱃지 -->
                   <div style="display: inline-block; padding: 4px 12px; background-color: #e3f2fd; color: #1976d2; border-radius: 12px; font-size: 12px; font-weight: 600;">
                     {{ course.get_category_display }}
                   </div>
@@ -105,7 +98,6 @@
       </div>
     </section>
 
-    <!-- 공지사항 -->
     <section class="card notice-section">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h2 class="card-title" style="margin: 0;">📢 공지사항</h2>
@@ -127,14 +119,16 @@
           <ul style="list-style: none; padding: 0; margin: 0;">
             {% for notice in recent_notices %}
             <li style="padding: 15px; border-bottom: 1px solid #e9ecef; {% if forloop.last %}border-bottom: none;{% endif %}">
-              <a href="{% url 'board:notice_detail' notice.notice_id %}" style="text-decoration: none; color: #212529; display: flex; justify-content: space-between; align-items: center;">
-                <div style="flex: 1;">
+              <a href="{% url 'board:notice_detail' notice.notice_id %}" style="text-decoration: none; color: #212529; display: flex; align-items: center;">
+
+                <div>
                   {% if notice.is_pinned %}
-                    <span style="display: inline-block; padding: 2px 8px; background-color: #dc3545; color: white; font-size: 12px; font-weight: bold; border-radius: 3px; margin-right: 8px;">공지</span>
+                    <span style="display: inline-block; padding: 2px 8px; background-color: #dc3545; color: white; font-size: 12px; font-weight: bold; border-radius: 3px; margin-right: 8px;">중요</span>
                   {% endif %}
                   <span style="font-weight: 500;">{{ notice.title }}</span>
                 </div>
-                <span style="color: #6c757d; font-size: 14px; margin-left: 15px;">{{ notice.created_at|date:"Y.m.d" }}</span>
+
+                <span style="color: #6c757d; font-size: 14px; margin-left: 12px;">{{ notice.created_at|date:"Y.m.d" }}</span>
               </a>
             </li>
             {% endfor %}
@@ -155,61 +149,62 @@
     </section>
 
   </main>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-      <div class="support-fab" onclick="openChatbot()">
-          <i class="fa-solid fa-headset"></i>
-          <span>고객지원</span>
-      </div>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-      <style>
-          /* 버튼 스타일 */
-          .support-fab {
-              position: fixed;
-              bottom: 30px;
-              right: 30px;
-              background-color: #2563eb; /* 챗봇 테마 파란색 */
-              color: white;
-              padding: 12px 24px;
-              border-radius: 50px;
-              box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              gap: 10px;
-              font-weight: bold;
-              font-family: -apple-system, sans-serif;
-              transition: transform 0.2s, background-color 0.2s;
-              z-index: 9999; /* 다른 요소보다 항상 위에 */
-          }
+  <div class="support-fab" onclick="openChatbot()">
+      <i class="fa-solid fa-headset"></i>
+      <span>고객지원</span>
+  </div>
 
-          .support-fab:hover {
-              background-color: #1d4ed8;
-              transform: translateY(-2px);
-          }
+  <style>
+      /* 버튼 스타일 */
+      .support-fab {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          background-color: #2563eb; /* 챗봇 테마 파란색 */
+          color: white;
+          padding: 12px 24px;
+          border-radius: 50px;
+          box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-weight: bold;
+          font-family: -apple-system, sans-serif;
+          transition: transform 0.2s, background-color 0.2s;
+          z-index: 9999; /* 다른 요소보다 항상 위에 */
+      }
 
-          .support-fab i {
-              font-size: 20px;
-          }
-      </style>
+      .support-fab:hover {
+          background-color: #1d4ed8;
+          transform: translateY(-2px);
+      }
 
-      <script>
-          function openChatbot() {
-              // 챗봇 화면 크기 설정 (챗봇 UI에 맞춤)
-              const width = 420;
-              const height = 620;
+      .support-fab i {
+          font-size: 20px;
+      }
+  </style>
 
-              // 화면 중앙 좌표 계산
-              const left = (window.screen.width / 2) - (width / 2);
-              const top = (window.screen.height / 2) - (height / 2);
+  <script>
+      function openChatbot() {
+          // 챗봇 화면 크기 설정 (챗봇 UI에 맞춤)
+          const width = 420;
+          const height = 620;
 
-              // 새 창(팝업)으로 챗봇 열기
-              window.open(
-                  '/support/chatbot/',
-                  'DoroChatbot',
-                  `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no`
-              );
-          }
-      </script>
+          // 화면 중앙 좌표 계산
+          const left = (window.screen.width / 2) - (width / 2);
+          const top = (window.screen.height / 2) - (height / 2);
+
+          // 새 창(팝업)으로 챗봇 열기
+          window.open(
+              '/support/chatbot/',
+              'DoroChatbot',
+              `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no`
+          );
+      }
+  </script>
 
 {% endblock %}

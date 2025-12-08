@@ -23,10 +23,22 @@ def staff_or_instructor_required(view_func):
 
 
 def notice_list_view(request):
-    """공지사항 목록"""
-    notices = Notice.objects.all()
-    return render(request, 'board/notice_list.html', {'notices': notices})
+    """공지사항 목록 (필터링 기능 추가)"""
+    # 1. 모든 글 가져오기 (상단고정 우선, 그 다음 최신순)
+    notices = Notice.objects.all().order_by('-is_pinned', '-created_at')
 
+    # 2. URL에서 '?target=...' 값 확인하기
+    target_filter = request.GET.get('target')
+
+    # 3. 필터링 적용
+    # target 값이 있고, 'ALL'이 아닐 때만 필터링 (ALL은 필터 해제와 동일)
+    if target_filter and target_filter != 'ALL':
+        notices = notices.filter(target=target_filter)
+
+    context = {
+        'notices': notices,
+    }
+    return render(request, 'board/notice_list.html', context)
 
 def notice_detail_view(request, notice_id):
     """공지사항 상세"""

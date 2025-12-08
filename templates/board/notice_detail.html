@@ -10,7 +10,6 @@
 {% block content %}
 <div id="canvas" class="notice-detail">
 
-  <!-- Hero 영역 -->
   <section class="hero hero--notice">
     <div class="hero__inner">
       <h1 class="hero__title">공지사항</h1>
@@ -20,19 +19,21 @@
     </div>
   </section>
 
-  <!-- 메인 카드 -->
   <main class="notice-detail-layout" role="main" aria-label="공지 상세">
     <section class="notice-detail-card card">
 
-      <!-- 상단 타입/대상/제목 + 목록 버튼 -->
       <header class="notice-detail-card__top">
         <div class="notice-detail-top__left">
           <div class="notice-detail-badges">
-            <!-- 타입 뱃지 (공지 / 점검 등은 지금은 고정 텍스트) -->
-            <span class="notice-detail-badge notice-detail-badge--type">공지</span>
 
-            <!-- 대상 뱃지: 전체 고정 (필요하면 나중에 필드 붙이면 됨) -->
-            <span class="notice-detail-badge notice-detail-badge--role">전체</span>
+            <span class="notice-detail-badge notice-detail-badge--type">
+              {{ notice.get_notice_type_display }}
+            </span>
+
+            <span class="notice-detail-badge notice-detail-badge--role">
+              {{ notice.get_target_display }}
+            </span>
+
           </div>
 
           <h2 class="notice-detail-title">
@@ -42,13 +43,13 @@
 
         <div class="notice-detail-top__right">
           <a href="{% url 'board:notice_list' %}"
-             class="notice-detail-btn-list">
+             class="notice-detail-btn-list"
+             style="text-decoration: none;">
             목록
           </a>
         </div>
       </header>
 
-      <!-- 작성자 / 작성일 / 조회수 줄 -->
       <div class="notice-detail-card__meta">
         <div class="notice-detail-meta__left">
           <span class="notice-detail-meta__label">작성자:</span>
@@ -62,39 +63,37 @@
         </div>
       </div>
 
-      <!-- 본문 -->
       <div class="notice-detail-card__body">
-        <div class="notice-detail-body__box">
+        <div class="notice-detail-body__box" style="border: none;">
           {{ notice.content|linebreaksbr }}
         </div>
       </div>
 
-      <!-- 하단 버튼(삭제/수정) -->
-      <footer class="notice-detail-card__actions">
-        <!-- 삭제: POST로 delete view 호출 -->
-        <form method="post"
-              action="{% url 'board:notice_delete' notice.notice_id %}"
-              class="notice-detail-delete-form">
-          {% csrf_token %}
-          <button type="button"
-                  class="notice-detail-btn notice-detail-btn--danger"
-                  id="btn-open-delete">
-            삭제
-          </button>
-        </form>
+      {% if user.is_authenticated %}
+        {% if user.role == 'manager' %}
+          <footer class="notice-detail-card__actions">
+            <form method="post"
+                  action="{% url 'board:notice_delete' notice.notice_id %}"
+                  class="notice-detail-delete-form">
+              {% csrf_token %}
+              <button type="button"
+                      class="notice-detail-btn notice-detail-btn--danger"
+                      id="btn-open-delete">
+                삭제
+              </button>
+            </form>
 
-        <!-- 수정: update 화면으로 이동 -->
-        <a href="{% url 'board:notice_update' notice.notice_id %}"
-           class="notice-detail-btn notice-detail-btn--primary">
-          수정
-        </a>
-      </footer>
+            <a href="{% url 'board:notice_update' notice.notice_id %}"
+               class="notice-detail-btn notice-detail-btn--primary"
+               style="text-decoration: none;">
+              수정
+            </a>
+          </footer>
+        {% endif %}
+      {% endif %}
 
     </section>
 
-    <!-- =======================
-         삭제 확인 팝업 (중앙)
-         ======================= -->
     <div class="notice-delete-layer"
          id="notice-delete-layer"
          aria-hidden="true">
@@ -123,7 +122,6 @@
 
   </main>
 
-  <!-- 삭제 팝업 제어 스크립트 -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const openBtn   = document.getElementById('btn-open-delete');
@@ -132,6 +130,7 @@
       const noBtn     = document.getElementById('notice-delete-no');
       const deleteForm = document.querySelector('.notice-detail-delete-form');
 
+      // 버튼이 없으면(권한 없음) 스크립트 실행 중단
       if (!openBtn || !layer || !yesBtn || !noBtn || !deleteForm) {
         return;
       }
@@ -152,7 +151,6 @@
       });
 
       yesBtn.addEventListener('click', function () {
-        // 실제 삭제 POST
         deleteForm.submit();
       });
 

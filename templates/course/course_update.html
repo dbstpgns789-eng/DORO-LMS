@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}강의 수정 | DORO LMS{% endblock %}
+{% block title %}강의 관리 | DORO LMS{% endblock %}
 
 {% block content %}
 <section class="hero">
   <div class="hero-inner">
-    <h1 class="hero-title">강의 수정</h1>
+    <h1 class="hero-title">{% if course %}강의 수정{% else %}강의 등록{% endif %}</h1>
   </div>
 </section>
 
 <main class="card-wrap">
   <div class="card-inner">
-    <form method="post" style="max-width: 800px; margin: 0 auto;">
+    <form method="post" enctype="multipart/form-data" style="max-width: 800px; margin: 0 auto;">
       {% csrf_token %}
 
       <div style="margin-bottom: 20px;">
@@ -21,6 +21,41 @@
         {% if form.title.errors %}
           <p style="color: #dc3545; font-size: 14px; margin-top: 5px;">{{ form.title.errors }}</p>
         {% endif %}
+      </div>
+
+      <div style="margin-bottom: 25px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: 600;">강의 대표 이미지</label>
+
+        {% if course.image %}
+          <div class="current-image-box" id="image-preview-box" style="margin-bottom: 15px;">
+            <p style="margin: 0 0 5px; font-size: 14px; color: #666;">현재 이미지:</p>
+
+            <div style="position: relative; display: inline-block; max-width: 100%;">
+
+              <img src="{{ course.image.url }}" alt="현재 이미지"
+                   style="display: block; max-width: 100%; height: 250px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
+
+              <label for="image-clear-checkbox" class="btn-image-delete" title="이미지 삭제">
+                <i class="fa-solid fa-xmark"></i> ✕
+              </label>
+            </div>
+
+            <div style="display: none;">
+              <input type="checkbox" name="image-clear" id="image-clear-checkbox">
+            </div>
+
+            <p id="delete-msg" style="color: #dc3545; font-size: 14px; display: none; margin-top: 8px; font-weight: bold;">
+              ⚠️ '수정하기'를 누르면 이미지가 삭제됩니다.
+            </p>
+          </div>
+        {% endif %}
+
+        <div style="margin-top: 10px;">
+          <label style="font-size: 14px; color: #666; display: block; margin-bottom: 5px;">
+            {% if course.image %}이미지 변경 (새 파일 선택 시 기존 이미지 대체):{% else %}이미지 등록:{% endif %}
+          </label>
+          {{ form.image }}
+        </div>
       </div>
 
       <div style="margin-bottom: 20px;">
@@ -32,21 +67,80 @@
       </div>
 
       <div style="margin-bottom: 30px;">
-        <label style="display: flex; align-items: center; gap: 8px;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
           {{ form.is_active }}
-          <span>{{ form.is_active.label }}</span>
+          <span style="font-weight: 500;">{{ form.is_active.label }}</span>
         </label>
       </div>
 
       <div style="display: flex; gap: 10px; justify-content: flex-end;">
-        <a href="{% url 'course:course_detail' course.course_id %}" style="display: inline-block; padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px;">
-          취소
-        </a>
-        <button type="submit" style="padding: 10px 20px; background-color: #0d6efd; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: 500;">
-          수정하기
-        </button>
+        {% if course %}
+          <a href="{% url 'course:course_detail' course.course_id %}" style="padding: 12px 24px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">취소</a>
+          <button type="submit" style="padding: 12px 24px; background-color: #0d6efd; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600;">수정하기</button>
+        {% else %}
+          <a href="{% url 'course:course_list' %}" style="padding: 12px 24px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">취소</a>
+          <button type="submit" style="padding: 12px 24px; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600;">등록하기</button>
+        {% endif %}
       </div>
     </form>
   </div>
 </main>
+
+<style>
+  /* 삭제 버튼 스타일 (이미지 안쪽 우측 상단) */
+  .btn-image-delete {
+    position: absolute;
+    top: 10px;    /* 위쪽 여백 */
+    right: 10px;  /* 오른쪽 여백 */
+    width: 32px;
+    height: 32px;
+    background-color: rgba(255, 255, 255, 0.9); /* 흰색 반투명 배경 */
+    color: #dc3545; /* 빨간색 글자 */
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 50%; /* 원형 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 10; /* 이미지보다 위에 오도록 */
+    transition: all 0.2s ease;
+  }
+
+  .btn-image-delete:hover {
+    background-color: #dc3545;
+    color: white;
+    transform: scale(1.1);
+  }
+
+  /* 삭제 체크 시 이미지를 흐리게 처리 */
+  .image-deleted img {
+    opacity: 0.3;
+    filter: grayscale(100%);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const clearCheckbox = document.getElementById('image-clear-checkbox');
+    const previewBox = document.getElementById('image-preview-box');
+    const deleteMsg = document.getElementById('delete-msg');
+
+    if(clearCheckbox && previewBox) {
+      clearCheckbox.addEventListener('change', function() {
+        if(this.checked) {
+          // 체크박스가 켜지면 -> 이미지를 흐리게 하고 메시지 표시
+          previewBox.classList.add('image-deleted');
+          deleteMsg.style.display = 'block';
+        } else {
+          // 체크박스가 꺼지면 -> 원상복구
+          previewBox.classList.remove('image-deleted');
+          deleteMsg.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>
+
 {% endblock %}

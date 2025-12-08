@@ -10,7 +10,6 @@
 {% block content %}
 <div id="canvas" class="notice-admin-update">
 
-  <!-- 🎨 Hero : 공지사항 -->
   <section class="hero hero--notice">
     <div class="hero__inner">
       <h1 class="hero__title">공지사항</h1>
@@ -20,7 +19,6 @@
     </div>
   </section>
 
-  <!-- 📄 공지 작성 카드 -->
   <main class="notice-update-layout" role="main" aria-label="공지 작성">
     <section class="card notice-update-card">
 
@@ -39,10 +37,8 @@
         </div>
         {% endif %}
 
-        <!-- 1줄: 공지/점검 + 대상 + 제목 -->
         <div class="notice-update-row">
 
-          <!-- 공지/점검 선택 (UI용) -->
           <div class="field-group">
             <label for="notice_type" class="field-label">분류</label>
             <select id="notice_type" name="notice_type" class="field-control field-select">
@@ -51,17 +47,15 @@
             </select>
           </div>
 
-          <!-- 전체/학생/강사 선택 (UI용) -->
           <div class="field-group">
             <label for="notice_target" class="field-label">대상</label>
-            <select id="notice_target" name="notice_target" class="field-control field-select">
+            <select id="notice_target" name="target" class="field-control field-select">
               <option value="ALL">전체</option>
               <option value="STUDENT">학생</option>
               <option value="TEACHER">강사</option>
             </select>
           </div>
 
-          <!-- 제목 입력 -->
           <div class="field-group field-group--grow">
             <label for="notice_title" class="field-label">제목</label>
             <input
@@ -80,7 +74,6 @@
           </div>
         </div>
 
-        <!-- 2줄: 편집기 영역 (툴바 + 본문) -->
         <div class="editor-shell">
           <div class="editor-toolbar">
             <div class="editor-toolbar__left" aria-hidden="true">
@@ -103,7 +96,6 @@
           </div>
         {% endif %}
 
-        <!-- 상단 고정 체크 -->
         <div style="margin-top:12px;">
           <label style="display:flex; align-items:center; gap:8px; font-size:14px;">
             <input type="checkbox"
@@ -118,11 +110,10 @@
           {% endif %}
         </div>
 
-        <!-- 하단 버튼 -->
         <div class="notice-update-footer">
           <a href="{% url 'board:notice_list' %}"
              class="btn-primary"
-             style="background:#6B7280; margin-right:8px;">
+             style="background:#6B7280; margin-right:8px; text-decoration: none;">
             취소
           </a>
           <button type="submit" class="btn-primary notice-update__submit">
@@ -132,22 +123,6 @@
       </form>
     </section>
   </main>
-
-  <!-- 📌 우측 고정 배너 -->
-  <aside class="support-banner" aria-label="고객지원 바로가기">
-    <button type="button" class="support-banner__item">
-      <span class="support-banner__icon support-banner__icon--chat"></span>
-      <span class="support-banner__label">챗봇<br>바로가기</span>
-    </button>
-    <button type="button" class="support-banner__item">
-      <span class="support-banner__icon support-banner__icon--phone"></span>
-      <span class="support-banner__label">상담 전화<br>바로가기</span>
-    </button>
-    <button type="button" class="support-banner__item">
-      <span class="support-banner__icon support-banner__icon--qna"></span>
-      <span class="support-banner__label">1:1 문의<br>바로가기</span>
-    </button>
-  </aside>
 
 </div>
 {% endblock %}

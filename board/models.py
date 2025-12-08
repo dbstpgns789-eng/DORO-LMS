@@ -9,6 +9,19 @@ from user.models import User
 
 
 class Notice(models.Model):
+    # 분류 선택지 (공지 / 점검)
+    TYPE_CHOICES = [
+        ('NOTICE', '공지'),
+        ('MAINT', '점검'),
+    ]
+
+    # 대상 선택지 (전체 / 학생 / 강사)
+    TARGET_CHOICES = [
+        ('ALL', '전체'),
+        ('STUDENT', '학생'),
+        ('TEACHER', '강사'),
+    ]
+
     notice_id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="작성자")
     title = models.CharField(max_length=200, verbose_name="제목")
@@ -17,6 +30,21 @@ class Notice(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="수정일")
     views = models.IntegerField(default=0, verbose_name="조회수")
     is_pinned = models.BooleanField(default=False, verbose_name="상단 고정")
+
+    # 🚨 [추가해야 할 필드] 🚨
+    notice_type = models.CharField(
+        max_length=10,
+        choices=TYPE_CHOICES,
+        default='NOTICE',
+        verbose_name="유형"
+    )
+
+    target = models.CharField(
+        max_length=10,
+        choices=TARGET_CHOICES,
+        default='ALL',
+        verbose_name="대상"
+    )
 
     class Meta:
         db_table = 'notice'

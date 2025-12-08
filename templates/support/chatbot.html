@@ -139,12 +139,12 @@
             box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
         }
 
-        /* '없습니다' 버튼 전용 스타일 (약간 회색조로 구별) */
-        .option-btn.exit-btn {
+        /* '없습니다' 및 '이전 단계' 버튼 스타일 */
+        .option-btn.exit-btn, .option-btn.back-btn {
             border-color: #94a3b8;
             color: #64748b;
         }
-        .option-btn.exit-btn:hover {
+        .option-btn.exit-btn:hover, .option-btn.back-btn:hover {
             background-color: #f1f5f9;
             color: #334155;
         }
@@ -231,17 +231,24 @@
         options.forEach(opt => {
             const btn = document.createElement("button");
 
-            // "없습니다" 버튼인지 확인 (ID로 구분)
+            // 버튼 종류 확인
             const isExit = opt.id === 'EXIT_BOT';
-            btn.className = isExit ? "option-btn exit-btn" : "option-btn";
+            const isBack = opt.id === 'BACK_BTN';
+
+            // 스타일 적용
+            if (isExit) btn.className = "option-btn exit-btn";
+            else if (isBack) btn.className = "option-btn back-btn";
+            else btn.className = "option-btn";
 
             // 아이콘 설정
             let icon;
             if (isExit) icon = '<i class="fa-solid fa-xmark"></i>'; // 닫기 아이콘
+            else if (isBack) icon = '<i class="fa-solid fa-arrow-left"></i>'; // 뒤로가기 아이콘
             else if (type === 'category') icon = '<i class="fa-regular fa-folder-open"></i>';
             else icon = '<i class="fa-regular fa-circle-question"></i>';
 
-            const text = type === 'category' ? opt.name : opt.question;
+            // 텍스트 설정
+            const text = (type === 'category' || isBack) ? opt.name : opt.question;
             btn.innerHTML = `${icon} ${text}`;
 
             btn.onclick = () => {
@@ -256,7 +263,14 @@
                 });
                 div.remove();
 
-                // 3. "없습니다" 클릭 시 -> 종료 멘트 후 로직 중단
+                // 3. [추가됨] 뒤로가기 버튼 클릭 시
+                if (isBack) {
+                    showTyping();
+                    setTimeout(() => fetchNextStep(opt.real_id), 600); // 부모 ID로 이동
+                    return;
+                }
+
+                // 4. "없습니다" 클릭 시 -> 종료 멘트 후 로직 중단
                 if (isExit) {
                     showTyping();
                     setTimeout(() => {
@@ -266,7 +280,7 @@
                     return;
                 }
 
-                // 4. 일반 버튼 클릭 시 -> 다음 단계 로딩
+                // 5. 일반 버튼 클릭 시 -> 다음 단계 로딩
                 showTyping();
 
                 if (type === 'category') {
@@ -279,6 +293,7 @@
                         setTimeout(() => {
                             showTyping();
                             setTimeout(() => {
+                                // 답변 확인 후 다시 목록 보여주기 (현재 레벨 유지)
                                 fetchNextStep(null, "더 궁금한 점이 있으신가요? 👇");
                             }, 800);
                         }, 1200);
@@ -304,22 +319,32 @@
             .then(data => {
                 setTimeout(() => {
                     hideTyping();
-                    if (data.data && data.data.length > 0) {
+                    if (data.data || data.type === 'empty') {
                         const msg = customMessage || data.message || "항목을 선택해주세요.";
                         addMessage("incoming", msg);
 
-                        // ✨ [수정됨] 데이터 목록 맨 끝에 '없습니다' 수동 추가
-                        const optionsWithExit = [...data.data, {
+                        // 기존 데이터 복사 (원본 배열 보호)
+                        let optionsWithExit = data.data ? [...data.data] : [];
+
+                        // [추가됨] '이전 단계' 버튼 추가 (서버가 has_back=true를 줬을 때)
+                        if (data.has_back) {
+                            optionsWithExit.push({
+                                id: 'BACK_BTN',
+                                real_id: data.back_id, // 서버에서 계산해준 돌아갈 ID
+                                name: '이전 단계',
+                                question: '이전 단계'
+                            });
+                        }
+
+                        // '없습니다' 버튼 추가
+                        optionsWithExit.push({
                             id: 'EXIT_BOT', // 식별자
                             name: '없습니다',
                             question: '없습니다'
-                        }];
+                        });
 
                         addOptions(optionsWithExit, data.type);
 
-                    } else if (data.type === 'empty') {
-                        addMessage("incoming", "내용이 없습니다. 😅");
-                        setTimeout(() => fetchNextStep(null, "다른 메뉴를 선택해주세요."), 1500);
                     }
                 }, 500);
             })

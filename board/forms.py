@@ -4,10 +4,13 @@ from django import forms
 from .models import Notice
 from .models import CommunityPost, CommunityComment
 
+
 class NoticeForm(forms.ModelForm):
     class Meta:
         model = Notice
-        fields = ['title', 'content', 'is_pinned']
+        # 🚨 [핵심 수정] fields 리스트에 'notice_type'과 'target'을 반드시 추가해야 합니다!
+        fields = ['title', 'content', 'is_pinned', 'notice_type', 'target']
+
         widgets = {
             'title': forms.TextInput(attrs={
                 'placeholder': '제목을 입력하세요',
@@ -30,11 +33,11 @@ class NoticeForm(forms.ModelForm):
 class CommunityPostForm(forms.ModelForm):
     class Meta:
         model = CommunityPost
-        # 👇 [수정 1] fields 리스트 맨 앞에 'board' 추가
+        # 👇 fields 리스트 맨 앞에 'board' 추가
         fields = ['board', 'post_title', 'content', 'open']
 
         widgets = {
-            # 👇 [수정 2] 드롭다운 스타일링을 위한 위젯 추가
+            # 👇 드롭다운 스타일링을 위한 위젯 추가
             'board': forms.Select(attrs={
                 'class': 'form-select',
                 'style': 'width: 100%; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px;'
@@ -54,13 +57,14 @@ class CommunityPostForm(forms.ModelForm):
                 'style': 'width: 18px; height: 18px;'
             }),
         }
-        # 👇 [선택 사항] 라벨 명시 (필요 시)
+        # 👇 라벨 명시
         labels = {
             'board': '게시판 분류',
             'post_title': '제목',
             'content': '내용',
             'open': '공개 여부',
         }
+
 
 class CommunityCommentForm(forms.ModelForm):
     class Meta:

@@ -4,146 +4,249 @@
 {% block title %}공지사항 | DORO LMS{% endblock %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/notice_list.css' %}">
+<style>
+  /* =========================================================
+     DORO LMS 디자인 시스템
+     ========================================================= */
+  :root {
+    --brand-blue: #4C5CFF;
+    --hero-gradient-start: #4C8DFF;
+    --hero-gradient-end: #4C5CFF;
+    --text-main: #111827;
+    --text-sub: #6B7280;
+    --bg-page: #F9FAFB;
+    --border-line: #E5E7EB;
+    --card-shadow: 0 18px 45px rgba(15,23,42,0.12);
+  }
+
+  body { background-color: var(--bg-page); }
+
+  /* 1. 히어로 섹션 */
+  .hero {
+    width: 100%;
+    background: linear-gradient(135deg, var(--hero-gradient-start), var(--hero-gradient-end));
+    padding: 80px 0 110px;
+    color: #fff; /* 기본 글자색 흰색 */
+  }
+  .hero__inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* [수정됨] 타이틀 색상 흰색 강제 적용 */
+  .hero__title {
+    font-size: 48px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    line-height: 1.2;
+    color: #FFFFFF !important; /* 👈 무조건 흰색으로 나오도록 설정 */
+  }
+
+  .hero__subtitle {
+    font-size: 16px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9); /* 약간 투명한 흰색 */
+    margin: 0;
+  }
+
+  /* 2. 메인 레이아웃 (카드) */
+  .notice-layout {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .notice-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    margin-top: -56px;
+    overflow: hidden;
+    min-height: 600px;
+  }
+
+  /* 3. 탭 메뉴 영역 */
+  .tab-header {
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    border-bottom: 1px solid #F3F4F6;
+    background: #fff;
+  }
+
+  .tab-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    margin-right: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-sub);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab-item.active {
+    color: var(--brand-blue);
+    border-bottom-color: var(--brand-blue);
+    font-weight: 700;
+  }
+
+  /* 4. 리스트 아이템 */
+  .notice-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .notice-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-line);
+    transition: background-color 0.1s;
+    text-decoration: none;
+    color: var(--text-main);
+  }
+
+  .notice-item:hover {
+    background-color: #F9FAFB;
+  }
+
+  .notice-item-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  /* 5. 뱃지 스타일 */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 63px;
+    height: 29px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    box-sizing: border-box;
+    background: #fff;
+  }
+
+  .badge--all {
+    border: 1px solid #E65D64;
+    color: #FF0037;
+  }
+  .badge--student {
+    border: 1px solid #F59E0B;
+    color: #D97706;
+  }
+  .badge--teacher {
+    border: 1px solid #4C5CFF;
+    color: #4C5CFF;
+  }
+
+  .item-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #111827;
+  }
+
+  .item-date {
+    font-size: 14px;
+    color: #9CA3AF;
+    font-weight: 400;
+  }
+
+  .empty-state {
+    padding: 80px 0;
+    text-align: center;
+    color: #9CA3AF;
+    font-size: 15px;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<div id="canvas" class="notice-admin">
+<section class="hero">
+  <div class="hero__inner">
+    <h1 class="hero__title">공지사항</h1>
+    <p class="hero__subtitle">
+      관리자 공지 관리 화면입니다. 공지/점검 유형과 대상을 필터링하고 등록된 공지를 확인할 수 있습니다.
+    </p>
+  </div>
+</section>
 
-  {# ==== 디버그 박스: 기존 board/notice_list 기능 유지 ==== #}
-  <div class="debug-box">
-    <h3>🔍 디버깅 정보</h3>
-    <p><strong>로그인 여부:</strong> {{ request.user.is_authenticated }}</p>
-    {% if request.user.is_authenticated %}
-      <p><strong>사용자 이름:</strong> {{ request.user.name }}</p>
-      <p><strong>사용자 이메일:</strong> {{ request.user.email }}</p>
-      <p><strong>사용자 role:</strong> {{ request.user.role }}</p>
-      <p><strong>버튼 표시 조건:</strong>
-        {% if request.user.role == "instructor" or request.user.role == "manager" %}
-          <span style="color: green; font-weight: bold;">✅ 충족</span>
-        {% else %}
-          <span style="color: red; font-weight: bold;">❌ 불충족 (role: {{ request.user.role }})</span>
-        {% endif %}
-      </p>
-    {% else %}
-      <p style="color: red;"><strong>로그인되지 않음</strong></p>
-    {% endif %}
+<main class="notice-layout">
+  <div class="notice-card">
+
+    <div class="tab-header">
+      <a href="{% url 'board:notice_list' %}"
+         class="tab-item {% if not request.GET.target %}active{% endif %}">
+        전체
+      </a>
+      <a href="?target=STUDENT"
+         class="tab-item {% if request.GET.target == 'STUDENT' %}active{% endif %}">
+        학생
+      </a>
+      <a href="?target=TEACHER"
+         class="tab-item {% if request.GET.target == 'TEACHER' %}active{% endif %}">
+        강사
+      </a>
+    </div>
+
+    <ul class="notice-list">
+      {% for notice in notices %}
+      <li>
+        <a href="{% url 'board:notice_detail' notice.notice_id %}" class="notice-item">
+
+          <div class="notice-item-left">
+            {% if notice.target == 'ALL' %}
+              <span class="badge badge--all">전체</span>
+            {% elif notice.target == 'STUDENT' %}
+              <span class="badge badge--student">학생</span>
+            {% elif notice.target == 'TEACHER' %}
+              <span class="badge badge--teacher">강사</span>
+            {% endif %}
+
+            <span class="item-title">
+              {{ notice.title }}
+              {% if notice.is_pinned %}
+                <span style="color: #E9516A; font-size: 12px; margin-left: 4px;">📌</span>
+              {% endif %}
+            </span>
+          </div>
+
+          <span class="item-date">
+            {{ notice.created_at|date:"Y-m-d" }}
+          </span>
+
+        </a>
+      </li>
+      {% empty %}
+      <li class="empty-state">
+        등록된 공지사항이 없습니다.
+      </li>
+      {% endfor %}
+    </ul>
+
   </div>
 
-  <!-- 🎨 Hero 영역 -->
-  <section class="hero hero--notice">
-    <div class="hero__inner">
-      <h1 class="hero__title">공지사항</h1>
-      <p class="hero__subtitle">
-        관리자 공지 관리 화면입니다. 공지/점검 유형과 대상을 필터링하고 등록된 공지를 확인할 수 있습니다.
-      </p>
-    </div>
-  </section>
+  {% if user.is_staff or user.role == 'manager' %}
+  <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+    <a href="{% url 'board:notice_create' %}"
+       style="background: #4C5CFF; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px;">
+      공지 등록
+    </a>
+  </div>
+  {% endif %}
 
-  <!-- 📄 공지 리스트 카드 -->
-  <main class="notice-layout" role="main" aria-label="공지사항 목록">
-    <section class="card notice-card">
-
-      <!-- 탭 헤더 (전체 / 학생 / 강사) -->
-      <header class="notice-card__header">
-        <div class="notice-tabs" role="tablist" aria-label="공지 대상 필터">
-          <button type="button" class="notice-tab is-active">전체</button>
-          <button type="button" class="notice-tab">학생</button>
-          <button type="button" class="notice-tab">강사</button>
-        </div>
-      </header>
-
-      <!-- 공지 리스트 본문 -->
-      <div class="notice-card__body">
-        <ul class="notice-list">
-          {% for notice in notices %}
-          <li class="notice-item">
-            <div class="notice-item__badges">
-              <!-- 타입 뱃지 -->
-              <span class="badge badge--type-alert">
-                {% if notice.is_pinned %}공지{% else %}공지{% endif %}
-              </span>
-
-              <!-- 대상 뱃지 -->
-              {% if notice.target %}
-                {% if notice.target == "STUDENT" %}
-                  <span class="badge badge--role-student">학생</span>
-                {% elif notice.target == "TEACHER" %}
-                  <span class="badge badge--role-teacher">강사</span>
-                {% else %}
-                  <span class="badge badge--role-all">전체</span>
-                {% endif %}
-              {% else %}
-                <span class="badge badge--role-all">전체</span>
-              {% endif %}
-            </div>
-
-            <a href="{% url 'board:notice_detail' notice.notice_id %}"
-               class="notice-item__title">
-              {{ notice.title }}
-              <span class="notice-item__date">
-                ({{ notice.created_at|date:"Y-m-d" }})
-              </span>
-            </a>
-          </li>
-          {% empty %}
-          <li class="notice-item">
-            <span style="color:#6B7280;">등록된 공지사항이 없습니다.</span>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-
-      <!-- 페이지네이션 + 공지 등록 버튼 -->
-      <footer class="notice-card__footer">
-        <div class="notice-admin__pagination">
-          {% if is_paginated %}
-            <button type="button" class="page-arrow" {% if not page_obj.has_previous %}disabled{% endif %}>
-              ◀
-            </button>
-            <span class="page-info">
-              {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
-            </span>
-            <button type="button" class="page-arrow" {% if not page_obj.has_next %}disabled{% endif %}>
-              ▶
-            </button>
-          {% else %}
-            <span class="page-info">1 / 1</span>
-          {% endif %}
-        </div>
-
-        <div class="notice-admin__actions">
-          {# 괄호 대신 중첩 if로 분리 #}
-          {% if request.user.is_authenticated %}
-            {% if request.user.role == "instructor" or request.user.role == "manager" %}
-              <a href="{% url 'board:notice_create' %}"
-                 class="btn-primary notice-admin__btn-create">
-                공지 등록
-              </a>
-            {% endif %}
-          {% endif %}
-        </div>
-      </footer>
-
-    </section>
-  </main>
-
-  <!-- 📌 우측 고정 배너 -->
-  <aside class="support-banner" aria-label="고객지원 바로가기">
-    <button type="button" class="support-banner__item">
-      <span class="support-banner__icon support-banner__icon--chat"></span>
-      <span class="support-banner__label">챗봇<br>바로가기</span>
-    </button>
-    <button type="button" class="support-banner__item">
-      <span class="support-banner__icon support-banner__icon--phone"></span>
-      <span class="support-banner__label">상담 전화<br>바로가기</span>
-    </button>
-    <button type="button" class="support-banner__item">
-      <span class="support-banner__icon support-banner__icon--qna"></span>
-      <span class="support-banner__label">1:1 문의<br>바로가기</span>
-    </button>
-  </aside>
-
-</div>
+</main>
 {% endblock %}
-

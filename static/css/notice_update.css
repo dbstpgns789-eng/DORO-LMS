@@ -1,146 +1,299 @@
-/* infoBox 내부(입력 패널)만 스타일링한다.
-   위치/좌표, 카드 크기는 mypage.css가 담당한다. */
-
-#infoBox{
-  padding:20px;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  background:#ffffff;
-  box-sizing:border-box;
+/* ================================
+   DORO 디자인 시스템 기본 토큰
+   ================================ */
+:root{
+  --bg-page:#F9FAFB;
+  --brand:#4C5CFF;
+  --hero-top:#4C8DFF;
+  --hero-bot:#4C5CFF;
+  --ink:#111827;
+  --muted:#6B7280;
+  --line:#E5E7EB;
+  --shadow:0 18px 45px rgba(15,23,42,0.12);
 }
 
-/* 카드 제목 */
-#infoBox .card-title{
-  margin:6px 2px 14px 2px;
-  font-size:18px;
-  font-weight:700;
-  color:#111111;
+/* base의 패딩 간섭 제거 */
+.wrapper{ padding:0 !important; }
+
+*{box-sizing:border-box;}
+html,body{
+  margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+body{
+  font-family:'Inter','Noto Sans KR',system-ui,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg-page);
 }
 
-/* 회색 패널 전체 레이아웃 */
-#infoBox .panel{
+/* 이 페이지의 캔버스 (클래스명 notice-update로 통일) */
+#canvas.notice-update{
+  min-height:100vh;
+  background:transparent;
+}
+
+/* ================================
+   🎨 Hero + 겹치는 카드 레이아웃
+   ================================ */
+
+.hero{
+  width:100%;
+  background:linear-gradient(135deg,var(--hero-top),var(--hero-bot));
+  color:#fff;
+}
+.hero--notice{
+  padding:80px 0 110px;
+}
+.hero__inner{
+  max-width:1120px;
+  margin:0 auto;
+  padding:0 24px;
+}
+.hero__title{
+  margin:0 0 8px;
+  font-size:48px;
+  line-height:1.2;
+  font-weight:600;
+  color:#ffffff;
+}
+.hero__subtitle{
+  margin:0;
+  font-size:16px;
+  line-height:1.5;
+  color:rgba(255,255,255,0.9);
+}
+
+/* 메인 레이아웃 */
+.notice-update-layout{
+  max-width:1120px;
+  margin:0 auto;
+  padding:0 24px 96px;
+  position:relative;
+  z-index:1;
+}
+
+/* 카드 공통 */
+.card{
+  background:#fff;
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+
+/* 공지 수정 카드 */
+.notice-update-card{
+  margin-top:-56px;
+  padding:24px 32px 28px;
+}
+.notice-update-card__header{
+  margin-bottom:16px;
+}
+.notice-update-card__title{
+  margin:0;
+  font-size:20px;
+  font-weight:600;
+  color:var(--ink);
+}
+
+/* ================================
+   폼 레이아웃 (공지/대상/제목)
+   ================================ */
+
+.notice-update-form{
+  margin:0;
+}
+
+.notice-update-row{
+  display:flex;
+  gap:12px;
+  align-items:flex-end;
+  margin-bottom:18px;
+}
+
+/* 라벨 */
+.field-group{
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:6px;
+}
+.field-group--grow{
+  flex:1 1 auto;
+}
+.field-label{
+  font-size:13px;
+  font-weight:500;
+  color:var(--muted);
 }
 
-/* 각 행(연락처/이메일/주소/생년월일) */
-#infoBox .row{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:10px 14px;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  background:#f7f9fc;
-}
-
-/* 라벨/내용 영역 */
-#infoBox .lbl{
-  width:110px;
-  color:#111111;
-  font-weight:600;
-}
-#infoBox .main{
-  flex:1;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  min-height:36px;
-}
-
-/* 기본: 마스킹만 보이고 입력은 숨김 */
-#infoBox .masked{
-  display:inline-block;
-  color:#111111;
-}
-#infoBox .text,
-#infoBox .inputs{
-  display:none;
-}
-
-/* editing 상태: 입력 보이고 마스킹 숨김 */
-#infoBox .row.editing .masked{
-  display:none;
-}
-#infoBox .row.editing .text{
-  display:block;
-}
-#infoBox .row.editing .inputs{
-  display:flex;
-}
-
-/* 텍스트 입력 공통 */
-#infoBox .text{
-  flex:1;
-  height:36px;
+/* 인풋/셀렉트 공통 */
+.field-control{
+  height:42px;
   padding:0 12px;
-  border:1px solid #d1d5db;
-  border-radius:8px;
-  background:#ffffff;
-  outline:none;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:14px;
+  color:var(--ink);
+  font-family:inherit;
 }
-#infoBox .wide{
+.field-input{
   width:100%;
 }
+.field-select{
+  min-width:120px;
+}
+.field-control:focus{
+  outline:none;
+  border-color:var(--brand);
+  box-shadow:0 0 0 1px rgba(76,92,255,0.45);
+}
 
-/* 숫자 입력(전화, 생일) */
-#infoBox .inputs input{
-  width:60px;
-  height:36px;
-  padding:0 8px;
-  border:1px solid #d1d5db;
-  border-radius:8px;
-  background:#ffffff;
+/* ================================
+   에디터 영역 (툴바 + 본문)
+   ================================ */
+
+.editor-shell{
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#fff;
+  overflow:hidden;
+}
+
+/* 툴바 */
+.editor-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:4px 8px;
+  height:30px;
+  background:#FFFFFF;
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+  color:var(--muted);
+}
+.editor-toolbar__left{
+  display:flex;
+  align-items:center;
+}
+.editor-toolbar__img{
+  display:block;
+  height:18px;
+  width:auto;
+}
+
+/* 본문 텍스트 영역 */
+.editor-body{
+  display:block;
+  width:100%;
+  min-height:430px;
+  padding:12px;
+  border:none;
+  resize:vertical;
+  font-family:inherit;
+  font-size:14px;
+  line-height:1.5;
+  color:var(--ink);
+}
+.editor-body:focus{
   outline:none;
 }
-#infoBox .inputs.phone input.ph:nth-child(1){
-  width:70px;
-}
-#infoBox .sep{
-  opacity:0.6;
-}
 
-/* "수정" 미니 버튼 */
-#infoBox .btn-mini{
-  height:28px;
-  padding:0 10px;
-  border:1px solid #cbd5e1;
-  border-radius:999px;
-  background:#ffffff;
-  font-size:12px;
-  cursor:pointer;
-}
-#infoBox .btn-mini[disabled]{
-  opacity:0.5;
-  cursor:default;
-}
+/* ================================
+   하단 버튼
+   ================================ */
 
-/* 저장 버튼 영역 */
-#infoBox .form-actions{
+.notice-update-footer{
   display:flex;
   justify-content:flex-end;
-  margin-top:8px;
-}
-#infoBox .btn-save{
-  height:34px;
-  padding:0 14px;
-  border:0;
-  border-radius:999px;
-  background:#4f46e5;
-  color:#ffffff;
-  font-weight:700;
-  cursor:pointer;
+  margin-top:16px;
 }
 
-/* 접근성용 숨김 인풋 */
-#infoBox .sr-only{
-  position:absolute;
-  width:1px;
-  height:1px;
-  padding:0;
-  margin:-1px;
-  overflow:hidden;
-  clip:rect(0,0,0,0);
-  border:0;
+.btn-primary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:120px;
+  height:44px;
+  padding:0 24px;
+  border-radius:9999px;
+  border:none;
+  background:var(--brand);
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .05s ease, box-shadow .05s ease, filter .05s ease;
+}
+.btn-primary:hover{
+  filter:brightness(1.05);
+  box-shadow:0 10px 25px rgba(37,99,235,0.25);
+  transform:translateY(-1px);
+}
+.btn-primary:active{
+  transform:translateY(0);
+  box-shadow:none;
+}
+.notice-update__submit{
+  white-space:nowrap;
+}
+
+/* 취소 버튼 스타일 (회색) */
+.btn-secondary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:120px;
+  height:44px;
+  padding:0 24px;
+  border-radius:9999px;
+  border:none;
+  background:#6B7280;
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  margin-right:8px;
+  transition:transform .05s ease, box-shadow .05s ease, filter .05s ease;
+}
+.btn-secondary:hover{
+  filter:brightness(1.05);
+  transform:translateY(-1px);
+}
+
+/* ================================
+   수정 확인 토스트 팝업 (Update 전용)
+   ================================ */
+.update-toast{
+  position:fixed; inset:0; z-index:1600;
+  display:none; align-items:center; justify-content:center;
+  background:transparent;
+}
+.update-toast.is-visible{ display:flex; }
+.update-toast__box{
+  box-sizing:border-box; width:278px; height:236px;
+  background:#FFFFFF; border:0.5px solid #2600FF;
+  box-shadow:2px 2px 5px rgba(0,0,0,0.25);
+  border-radius:10px;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:10px;
+}
+.update-toast__icon-circle{
+  box-sizing:border-box; width:35px; height:35px;
+  border-radius:50%; background:rgba(38,0,255,0.78);
+  border:1px solid rgba(38,0,255,0.78);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:2px 2px 5px rgba(0,0,0,0.25);
+}
+.update-toast__icon-mark{
+  font-family:inherit; font-weight:700; font-size:24px;
+  line-height:29px; color:#FFFFFF;
+  text-shadow:2px 2px 5px rgba(0,0,0,0.25);
+}
+.update-toast__message{
+  margin:0; font-family:inherit; font-weight:700;
+  font-size:14px; color:#000000; text-align:center;
+}
+.update-toast__btn{
+  width:64px; height:28px; border:none; border-radius:5px;
+  background:#2600FF; color:#FFFFFF;
+  font-family:inherit; font-weight:700; font-size:12px;
+  cursor:pointer;
 }

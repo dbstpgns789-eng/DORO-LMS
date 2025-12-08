@@ -10,7 +10,6 @@
 {% block content %}
 <div id="canvas" class="notice-update">
 
-  <!-- Hero 영역 -->
   <section class="hero hero--notice">
     <div class="hero__inner">
       <h1 class="hero__title">공지사항</h1>
@@ -20,7 +19,6 @@
     </div>
   </section>
 
-  <!-- 메인 카드 -->
   <main class="notice-update-layout" role="main" aria-label="공지 수정">
     <section class="card notice-update-card">
 
@@ -32,34 +30,32 @@
         {% csrf_token %}
 
         {% if form.non_field_errors %}
-          <div class="form-errors">
-            {{ form.non_field_errors }}
+          <div style="margin-bottom:12px; color:#DC2626; font-size:13px;">
+            {% for err in form.non_field_errors %}
+              <div>{{ err }}</div>
+            {% endfor %}
           </div>
         {% endif %}
 
-        <!-- 1줄: 분류 / 대상 / 제목 -->
         <div class="notice-update-row">
 
-          <!-- 분류: 공지 / 점검 (UI 전용) -->
           <div class="field-group">
             <label for="notice_type" class="field-label">분류</label>
             <select id="notice_type" name="notice_type" class="field-control field-select">
-              <option value="NOTICE">공지</option>
-              <option value="MAINT">점검</option>
+              <option value="NOTICE" {% if form.instance.notice_type == 'NOTICE' %}selected{% endif %}>공지</option>
+              <option value="MAINT" {% if form.instance.notice_type == 'MAINT' %}selected{% endif %}>점검</option>
             </select>
           </div>
 
-          <!-- 대상: 전체 / 학생 / 강사 (UI 전용) -->
           <div class="field-group">
             <label for="notice_target" class="field-label">대상</label>
-            <select id="notice_target" name="notice_target" class="field-control field-select">
-              <option value="ALL">전체</option>
-              <option value="STUDENT">학생</option>
-              <option value="TEACHER">강사</option>
+            <select id="notice_target" name="target" class="field-control field-select">
+              <option value="ALL" {% if form.instance.target == 'ALL' %}selected{% endif %}>전체</option>
+              <option value="STUDENT" {% if form.instance.target == 'STUDENT' %}selected{% endif %}>학생</option>
+              <option value="TEACHER" {% if form.instance.target == 'TEACHER' %}selected{% endif %}>강사</option>
             </select>
           </div>
 
-          <!-- 제목 (실제 필드) -->
           <div class="field-group field-group--grow">
             <label for="notice_title" class="field-label">{{ form.title.label }}</label>
             <input
@@ -71,12 +67,13 @@
               value="{{ form.title.value|default_if_none:'' }}"
             >
             {% if form.title.errors %}
-              <p class="field-error">{{ form.title.errors.0 }}</p>
+              <div style="color:#DC2626; font-size:12px; margin-top:4px;">
+                {% for err in form.title.errors %}{{ err }}{% endfor %}
+              </div>
             {% endif %}
           </div>
         </div>
 
-        <!-- 에디터 영역 -->
         <div class="editor-shell">
           <div class="editor-toolbar">
             <div class="editor-toolbar__left" aria-hidden="true">
@@ -91,40 +88,46 @@
             name="{{ form.content.name }}"
             class="editor-body"
             placeholder="공지 내용을 입력하세요.">{{ form.content.value|default_if_none:'' }}</textarea>
-          {% if form.content.errors %}
-            <p class="field-error">{{ form.content.errors.0 }}</p>
+        </div>
+        {% if form.content.errors %}
+          <div style="color:#DC2626; font-size:12px; margin-top:4px;">
+            {% for err in form.content.errors %}{{ err }}{% endfor %}
+          </div>
+        {% endif %}
+
+        <div style="margin-top:12px;">
+          <label style="display:flex; align-items:center; gap:8px; font-size:14px;">
+            <input type="checkbox"
+                   name="is_pinned"
+                   {% if form.instance.is_pinned %}checked{% endif %}>
+            <span>상단 고정</span>
+          </label>
+          {% if form.is_pinned.errors %}
+            <div style="color:#DC2626; font-size:12px; margin-top:4px;">
+              {% for err in form.is_pinned.errors %}{{ err }}{% endfor %}
+            </div>
           {% endif %}
         </div>
 
-        <!-- 상단 고정 -->
-        <div class="notice-update-pinned">
-          <label class="pinned-label">
-            {{ form.is_pinned }}
-            <span>{{ form.is_pinned.label }}</span>
-          </label>
-        </div>
-
-        <!-- 하단 버튼 -->
         <div class="notice-update-footer">
           <a href="{% url 'board:notice_detail' notice.notice_id %}"
-             class="btn-secondary notice-update__cancel">
+             class="btn-secondary notice-update__cancel"
+             style="text-decoration: none;">
             취소
           </a>
-          <button type="submit"
-                  class="btn-primary notice-update__submit">
+          <button type="submit" class="btn-primary notice-update__submit">
             수정 완료
           </button>
         </div>
       </form>
     </section>
 
-    <!-- ✅ 수정 완료 토스트 -->
     <div class="update-toast" id="update-toast" aria-hidden="true">
       <div class="update-toast__box">
         <div class="update-toast__icon-circle">
           <span class="update-toast__icon-mark">!</span>
         </div>
-        <p class="update-toast__message">수정이 완료되었습니다.</p>
+        <p class="update-toast__message">수정 하시겠습니까?</p>
         <button type="button"
                 class="update-toast__btn"
                 id="update-toast-confirm">
@@ -135,7 +138,6 @@
 
   </main>
 
-  <!-- 토스트 제어 스크립트 -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const form = document.querySelector('.notice-update-form');
@@ -145,16 +147,18 @@
 
       if (!form || !submitBtn || !toast || !toastConfirm) return;
 
-      // JS 켜져 있을 때만 기본 submit 막기
-      submitBtn.type = 'button';
-
-      submitBtn.addEventListener('click', function () {
+      // 1. Submit 버튼 클릭 시 팝업 띄우기
+      submitBtn.addEventListener('click', function (e) {
+        e.preventDefault();
         toast.classList.add('is-visible');
+        toast.setAttribute('aria-hidden', 'false');
       });
 
+      // 2. 확인 버튼 클릭 시 실제 전송
       toastConfirm.addEventListener('click', function () {
         toast.classList.remove('is-visible');
-        form.submit();  // 실제 폼 전송
+        toast.setAttribute('aria-hidden', 'true');
+        form.submit();
       });
     });
   </script>
