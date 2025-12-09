@@ -4,351 +4,12 @@
 {% block title %}{{ course.title }} | 강의실{% endblock %}
 
 {% block extra_css %}
-<style>
-  .course-room-container {
-    display: flex;
-    max-width: 1400px;
-    margin: 20px auto;
-    gap: 20px;
-    padding: 20px;
-  }
-
-  /* 좌측 사이드바 */
-  .sidebar {
-    width: 250px;
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 0;
-    height: fit-content;
-    position: sticky;
-    top: 20px;
-  }
-
-  .course-info-box {
-    padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 8px 8px 0 0;
-  }
-
-  .course-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
-
-  .course-instructor {
-    font-size: 14px;
-    opacity: 0.9;
-  }
-
-  .sidebar-menu {
-    list-style: none;
-    padding: 15px;
-    margin: 0;
-  }
-
-  .sidebar-menu li {
-    margin-bottom: 5px;
-  }
-
-  .sidebar-menu a {
-    display: block;
-    padding: 12px 15px;
-    color: #333;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: all 0.2s;
-    font-size: 14px;
-    cursor: pointer;
-  }
-
-  .sidebar-menu a:hover {
-    background-color: #f0f0f0;
-  }
-
-  .sidebar-menu a.active {
-    background-color: #4650D5;
-    color: white;
-    font-weight: 600;
-  }
-
-  /* 메인 콘텐츠 */
-  .main-content {
-    flex: 1;
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 30px;
-  }
-
-  /* 👇 탭 콘텐츠 - 기본은 숨김 */
-  .tab-content {
-    display: none;
-  }
-
-  .tab-content.active {
-    display: block;
-  }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-  }
-
-  .section-title {
-    font-size: 24px;
-    font-weight: 600;
-    margin: 0;
-  }
-
-  .btn-create {
-    padding: 8px 16px;
-    background-color: #4650D5;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 14px;
-    white-space: nowrap;
-  }
-
-  .btn-create:hover {
-    background-color: #3640C5;
-  }
-
-  /* 공지사항 */
-  .notice-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .notice-item {
-    padding: 15px;
-    border-bottom: 1px solid #e0e0e0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .notice-item:hover {
-    background-color: #f8f9fa;
-  }
-
-  .notice-title {
-    font-weight: 500;
-    color: #333;
-  }
-
-  .notice-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    background-color: #dc3545;
-    color: white;
-    font-size: 11px;
-    border-radius: 3px;
-    margin-right: 8px;
-  }
-
-  .notice-date {
-    font-size: 13px;
-    color: #666;
-  }
-
-  /* 주차별 자료 */
-  .week-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 15px;
-  }
-
-  .week-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
-    transition: all 0.3s;
-  }
-
-  .week-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transform: translateY(-3px);
-  }
-
-  .week-number {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 8px;
-  }
-
-  .week-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #333;
-  }
-
-  .week-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-  }
-
-  .btn-download {
-    padding: 6px 12px;
-    background-color: #28a745;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 13px;
-  }
-
-  .btn-video {
-    padding: 6px 12px;
-    background-color: #dc3545;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 13px;
-  }
-
-  /* 과제 */
-  .assignment-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .assignment-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .assignment-info {
-    flex: 1;
-  }
-
-  .assignment-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #333;
-  }
-
-  .assignment-meta {
-    font-size: 14px;
-    color: #666;
-  }
-
-  .btn-submit {
-    padding: 8px 20px;
-    background-color: #4650D5;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 14px;
-  }
-
-  .btn-submitted {
-    padding: 8px 20px;
-    background-color: #28a745;
-    color: white;
-    border-radius: 5px;
-    font-size: 14px;
-  }
-
-  /* 질문 게시판 */
-  .question-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .question-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 16px;
-    transition: all 0.2s;
-    text-decoration: none;
-    color: inherit;
-    display: block;
-  }
-
-  .question-card:hover {
-    background-color: #f8f9fa;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-
-  .question-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    margin-bottom: 8px;
-  }
-
-  .question-title-text {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-  }
-
-  .resolved-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    background-color: #28a745;
-    color: white;
-    font-size: 11px;
-    border-radius: 3px;
-    margin-left: 8px;
-  }
-
-  .question-content {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 10px;
-    line-height: 1.5;
-  }
-
-  .question-meta {
-    display: flex;
-    gap: 15px;
-    font-size: 13px;
-    color: #999;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: #999;
-  }
-
-  .empty-state p {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-
-  .empty-state a {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #4650D5;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-  }
-</style>
+  <link rel="stylesheet" href="{% static 'css/course_room.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="course-room-container">
 
-  <!-- 좌측 사이드바 -->
   <aside class="sidebar">
     <div class="course-info-box">
       <div class="course-title">{{ course.title }}</div>
@@ -364,95 +25,72 @@
     </ul>
   </aside>
 
-  <!-- 메인 콘텐츠 -->
   <main class="main-content">
 
-    <!-- 공지사항 탭 -->
-<div id="notices" class="tab-content active">
-  <div class="section-header">
-    <h2 class="section-title">📢 공지사항</h2>
-    {% if request.user == course.instructor or request.user.role == 'manager' %}
-    <a href="{% url 'classroom:notice_create' course.course_id %}" class="btn-create">
-      ✍️ 공지 작성
-    </a>
-    {% endif %}
-  </div>
-
-  {% if notices %}
-  <ul class="notice-list">
-    {% for notice in notices %}
-    <li class="notice-item" style="cursor: pointer;" onclick="location.href='{% url 'classroom:notice_detail' notice.notice_id %}'">
-      <div>
-        {% if notice.is_pinned %}
-        <span class="notice-badge">공지</span>
-        {% endif %}
-        <span class="notice-title">{{ notice.title }}</span>
-      </div>
-
-      <div style="display: flex; gap: 10px; align-items: center;">
-        <span class="notice-date">{{ notice.created_at|date:"Y.m.d" }}</span>
-
-        <!-- 👇 강사만 보이는 수정/삭제 버튼 (클릭 이벤트 방지) -->
+    <div id="notices" class="tab-content active">
+      <div class="section-header">
+        <h2 class="section-title">📢 공지사항</h2>
         {% if request.user == course.instructor or request.user.role == 'manager' %}
-        <a href="{% url 'classroom:notice_update' notice.notice_id %}"
-           onclick="event.stopPropagation();"
-           style="padding: 4px 10px; background-color: #ffc107; color: white; text-decoration: none; border-radius: 3px; font-size: 12px;">
-          수정
-        </a>
-        <a href="{% url 'classroom:notice_delete' notice.notice_id %}"
-           onclick="event.stopPropagation();"
-           style="padding: 4px 10px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 3px; font-size: 12px;">
-          삭제
+        <a href="{% url 'classroom:notice_create' course.course_id %}" class="btn-create">
+          ✍️ 공지 작성
         </a>
         {% endif %}
       </div>
-    </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <div class="empty-state">
-    <p>📋 등록된 공지사항이 없습니다.</p>
-    {% if request.user == course.instructor or request.user.role == 'manager' %}
-    <a href="{% url 'classroom:notice_create' course.course_id %}">
-      첫 공지 작성하기
-    </a>
-    {% endif %}
-  </div>
-  {% endif %}
-</div>
 
-    <!-- 주차별 자료 탭 -->
-    <div id="weekly" class="tab-content">
-        <div class="section-header">
-            <h2 class="section-title">📚 주차별 강의 자료</h2>
-            {% if request.user == course.instructor or request.user.role == 'manager' %}
-            <a href="{% url 'classroom:weekly_create' course.course_id %}" class="btn-create">
-            📤 자료 업로드
-            </a>
+      {% if notices %}
+      <ul class="notice-list">
+        {% for notice in notices %}
+        <li class="notice-item" onclick="location.href='{% url 'classroom:notice_detail' notice.notice_id %}'">
+          <div>
+            {% if notice.is_pinned %}
+            <span class="notice-badge">공지</span>
             {% endif %}
+            <span class="notice-title">{{ notice.title }}</span>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="notice-date">{{ notice.created_at|date:"Y.m.d" }}</span>
+            {% if request.user == course.instructor or request.user.role == 'manager' %}
+            <a href="{% url 'classroom:notice_update' notice.notice_id %}" onclick="event.stopPropagation();" class="btn-mini-edit">수정</a>
+            <a href="{% url 'classroom:notice_delete' notice.notice_id %}" onclick="event.stopPropagation();" class="btn-mini-delete">삭제</a>
+            {% endif %}
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <div class="empty-state">
+        <p>📋 등록된 공지사항이 없습니다.</p>
+        {% if request.user == course.instructor or request.user.role == 'manager' %}
+        <a href="{% url 'classroom:notice_create' course.course_id %}">첫 공지 작성하기</a>
+        {% endif %}
+      </div>
+      {% endif %}
     </div>
+
+    <div id="weekly" class="tab-content">
+      <div class="section-header">
+        <h2 class="section-title">📚 주차별 강의 자료</h2>
+        {% if request.user == course.instructor or request.user.role == 'manager' %}
+        <a href="{% url 'classroom:weekly_create' course.course_id %}" class="btn-create">
+          📤 자료 업로드
+        </a>
+        {% endif %}
+      </div>
 
       {% if weekly_contents %}
       <div class="week-grid">
-
         {% for content in weekly_contents %}
-<a href="{% url 'classroom:weekly_detail' content.content_id %}" class="week-card" style="display:block; text-decoration:none; color:inherit;">
-  <div class="week-number">{{ content.week_number }}주차</div>
-  <div class="week-title">{{ content.title }}</div>
-  <p style="font-size:14px; color:#666; line-height:1.5;">
-    {{ content.description|truncatewords:20 }}
-  </p>
-
-  <div class="week-actions">
-    {% if content.file %}
-    <span class="btn-download">📥 자료 다운로드</span>
-    {% endif %}
-    {% if content.video_url %}
-    <span class="btn-video">▶️ 동영상</span>
-    {% endif %}
-  </div>
-</a>
-{% endfor %}
+        <a href="{% url 'classroom:weekly_detail' content.content_id %}" class="week-card">
+          <div class="week-number">{{ content.week_number }}주차</div>
+          <div class="week-title">{{ content.title }}</div>
+          <p class="week-desc">{{ content.description|truncatewords:20 }}</p>
+          <div class="week-actions">
+            {% if content.file %}<span class="btn-download">📥 자료 다운로드</span>{% endif %}
+            {% if content.video_url %}<span class="btn-video">▶️ 동영상</span>{% endif %}
+          </div>
+        </a>
+        {% endfor %}
       </div>
       {% else %}
       <div class="empty-state">
@@ -461,90 +99,63 @@
       {% endif %}
     </div>
 
-<!-- 과제 탭 -->
-<div id="assignments" class="tab-content">
-  <div class="section-header">
-    <h2 class="section-title">📝 과제</h2>
-    {% if request.user == course.instructor or request.user.role == 'manager' %}
-    <a href="{% url 'classroom:assignment_create' course.course_id %}" class="btn-create">
-      ➕ 과제 등록
-    </a>
-    {% endif %}
-  </div>
+    <div id="assignments" class="tab-content">
+      <div class="section-header">
+        <h2 class="section-title">📝 과제</h2>
+        {% if request.user == course.instructor or request.user.role == 'manager' %}
+        <a href="{% url 'classroom:assignment_create' course.course_id %}" class="btn-create">
+          ➕ 과제 등록
+        </a>
+        {% endif %}
+      </div>
 
-  {% if assignments %}
-        <div class="assignment-list">
+      {% if assignments %}
+      <div class="assignment-list">
         {% for assignment in assignments %}
-        <div class="assignment-card" style="align-items: flex-start;">
+        <div class="assignment-card">
           <div class="assignment-info">
             <div class="assignment-title">
-              <a href="{% url 'classroom:assignment_detail' assignment.assignment_id %}"
-                 style="text-decoration:none; color:#212529;">
-                {{ assignment.title }}
-              </a>
+              <a href="{% url 'classroom:assignment_detail' assignment.assignment_id %}">{{ assignment.title }}</a>
             </div>
             <div class="assignment-meta">
-              📅 마감: {{ assignment.due_date|date:"Y.m.d H:i" }} |
-              💯 배점: {{ assignment.max_score }}점
+              📅 마감: {{ assignment.due_date|date:"Y.m.d H:i" }} | 💯 배점: {{ assignment.max_score }}점
             </div>
           </div>
 
           <div style="text-align:right;">
-            {# 👇 학생에게만 제출 / 제출완료 버튼 표시 #}
             {% if request.user != course.instructor and request.user.role != 'manager' %}
               {% if assignment.assignment_id in submitted_ids %}
               <span class="btn-submitted">✅ 제출 완료</span>
               {% else %}
-              <a href="{% url 'classroom:submit_assignment' assignment.assignment_id %}" class="btn-submit">
-                📤 제출하기
-              </a>
+              <a href="{% url 'classroom:submit_assignment' assignment.assignment_id %}" class="btn-submit">📤 제출하기</a>
               {% endif %}
             {% endif %}
 
-            {# 👇 강사/매니저에게만 관리 버튼 표시 #}
             {% if request.user == course.instructor or request.user.role == 'manager' %}
-            <div style="margin-top:8px; display:flex; gap:6px; justify-content:flex-end;">
-              <a href="{% url 'classroom:submission_list' assignment.assignment_id %}"
-                 style="padding:6px 10px; background:#6c757d; color:#fff; border-radius:4px;
-                        font-size:12px; text-decoration:none;">
-                제출 목록
-              </a>
-              <a href="{% url 'classroom:assignment_update' assignment.assignment_id %}"
-                 style="padding:6px 10px; background:#0d6efd; color:#fff; border-radius:4px;
-                        font-size:12px; text-decoration:none;">
-                ✏️ 수정
-              </a>
-              <a href="{% url 'classroom:assignment_delete' assignment.assignment_id %}"
-                 style="padding:6px 10px; background:#dc3545; color:#fff; border-radius:4px;
-                        font-size:12px; text-decoration:none;">
-                🗑 삭제
-              </a>
+            <div class="admin-actions">
+              <a href="{% url 'classroom:submission_list' assignment.assignment_id %}" class="btn-manage" style="background:#6c757d;">제출 목록</a>
+              <a href="{% url 'classroom:assignment_update' assignment.assignment_id %}" class="btn-manage" style="background:#0d6efd;">✏️ 수정</a>
+              <a href="{% url 'classroom:assignment_delete' assignment.assignment_id %}" class="btn-manage" style="background:#dc3545;">🗑 삭제</a>
             </div>
             {% endif %}
           </div>
         </div>
         {% endfor %}
       </div>
+      {% else %}
+      <div class="empty-state">
+        <p>📝 등록된 과제가 없습니다.</p>
+        {% if request.user == course.instructor or request.user.role == 'manager' %}
+        <a href="{% url 'classroom:assignment_create' course.course_id %}">첫 과제 등록하기</a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
 
-  {% else %}
-  <div class="empty-state">
-    <p>📝 등록된 과제가 없습니다.</p>
-    {% if request.user == course.instructor or request.user.role == 'manager' %}
-    <a href="{% url 'classroom:assignment_create' course.course_id %}">
-      첫 과제 등록하기
-    </a>
-    {% endif %}
-  </div>
-  {% endif %}
-</div>
-
-    <!-- 질문 게시판 탭 -->
     <div id="questions" class="tab-content">
       <div class="section-header">
         <h2 class="section-title">💬 질문 게시판</h2>
-        <a href="{% url 'classroom:question_create' course.course_id %}" class="btn-create">
-          ✍️ 질문하기
-        </a>
+        <a href="{% url 'classroom:question_create' course.course_id %}" class="btn-create">✍️ 질문하기</a>
       </div>
 
       {% if questions %}
@@ -560,11 +171,7 @@
             </div>
             <span class="notice-date">{{ question.created_at|date:"Y.m.d" }}</span>
           </div>
-
-          <div class="question-content">
-            {{ question.content|truncatewords:20 }}
-          </div>
-
+          <div class="question-content">{{ question.content|truncatewords:20 }}</div>
           <div class="question-meta">
             <span>👤 {{ question.author.name }}</span>
             <span>💬 답변 {{ question.answers.count }}개</span>
@@ -575,9 +182,7 @@
       {% else %}
       <div class="empty-state">
         <p>💬 등록된 질문이 없습니다.</p>
-        <a href="{% url 'classroom:question_create' course.course_id %}">
-          첫 질문 작성하기
-        </a>
+        <a href="{% url 'classroom:question_create' course.course_id %}">첫 질문 작성하기</a>
       </div>
       {% endif %}
     </div>
@@ -588,26 +193,13 @@
 
 <script>
 function showTab(tabName) {
-  // 모든 탭 콘텐츠 숨김
   const allTabs = document.querySelectorAll('.tab-content');
-  allTabs.forEach(tab => {
-    tab.classList.remove('active');
-  });
-
-  // 모든 메뉴 링크 active 제거
+  allTabs.forEach(tab => { tab.classList.remove('active'); });
   const allLinks = document.querySelectorAll('.tab-link');
-  allLinks.forEach(link => {
-    link.classList.remove('active');
-  });
-
-  // 선택한 탭만 표시
+  allLinks.forEach(link => { link.classList.remove('active'); });
   document.getElementById(tabName).classList.add('active');
-
-  // 선택한 메뉴에 active 추가
   const selectedLink = document.querySelector(`[data-tab="${tabName}"]`);
-  if (selectedLink) {
-    selectedLink.classList.add('active');
-  }
+  if (selectedLink) { selectedLink.classList.add('active'); }
 }
 </script>
 {% endblock %}

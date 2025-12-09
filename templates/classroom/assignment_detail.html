@@ -3,135 +3,131 @@
 
 {% block title %}{{ assignment.title }} | 과제{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/assignment_detail.css' %}">
+{% endblock %}
+
 {% block content %}
-<main class="card-wrap" style="padding-top: 60px; padding-bottom: 60px;">
+<main class="card-wrap detail-wrap">
   <div class="card-inner">
 
-    <article style="max-width: 900px; margin: 0 auto;">
+    <article class="detail-inner">
 
-      <div style="margin-bottom: 30px;">
-        <h1 style="font-size: 32px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+      <div class="asg-title-section">
+        <h1 class="asg-title">
           📝 {{ assignment.title }}
         </h1>
-        <p style="font-size: 16px; color: #666; font-weight: 500;">
+        <p class="asg-course-name">
           {{ assignment.course.title }}
         </p>
       </div>
 
-      <section style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-        <div style="display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px;">
+      <section class="asg-meta-box">
+        <div class="asg-meta-grid">
           <div>
-            <span style="color: #6c757d;">마감일:</span>
-            <strong style="color: {% if assignment.is_overdue %}#dc3545{% else %}#212529{% endif %};">
+            <span class="meta-label">마감일:</span>
+            <strong class="meta-value {% if assignment.is_overdue %}overdue{% endif %}">
               {{ assignment.due_date|date:"Y년 m월 d일 H:i" }}
             </strong>
             {% if assignment.is_overdue %}
-            <span style="color: #dc3545; font-weight: 600; margin-left: 10px;">⏰ 마감 지남</span>
+            <span class="badge-overdue">⏰ 마감 지남</span>
             {% endif %}
           </div>
           <div>
-            <span style="color: #6c757d;">배점:</span>
-            <strong>{{ assignment.max_score }}점</strong>
+            <span class="meta-label">배점:</span>
+            <strong class="meta-value">{{ assignment.max_score }}점</strong>
           </div>
           <div>
-            <span style="color: #6c757d;">등록일:</span>
-            <strong>{{ assignment.created_at|date:"Y-m-d" }}</strong>
+            <span class="meta-label">등록일:</span>
+            <strong class="meta-value">{{ assignment.created_at|date:"Y-m-d" }}</strong>
           </div>
         </div>
       </section>
 
       {% if assignment.attachment %}
-      <section style="margin-bottom: 30px;">
-        <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">📎 첨부 파일</h2>
-        <div style="padding: 15px; border-radius: 8px; border: 1px solid #dee2e6; background:#f8f9fa;">
-          <a href="{{ assignment.attachment.url }}" target="_blank" style="color:#0d6efd;">
+      <section class="detail-section">
+        <h2 class="section-title">📎 첨부 파일</h2>
+        <div class="file-box">
+          <a href="{{ assignment.attachment.url }}" target="_blank" class="file-link">
             {{ assignment.attachment.name }}
           </a>
         </div>
       </section>
       {% endif %}
 
-      <section style="margin-bottom: 40px;">
-        <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 15px;">📋 과제 내용</h2>
-        <div style="line-height: 1.8; white-space: pre-wrap; padding: 20px; background-color: #fff; border: 1px solid #dee2e6; border-radius: 8px;">
+      <section>
+        <h2 class="section-title-lg">📋 과제 내용</h2>
+        <div class="content-box">
           {{ assignment.description }}
         </div>
       </section>
 
-      <section style="border: 2px solid {% if submission %}#28a745{% else %}#ffc107{% endif %}; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
-        <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 15px;">
-          {% if submission %}
-          ✅ 제출 완료
-          {% else %}
-          ⏳ 미제출
-          {% endif %}
+      <section class="submission-status-card {% if submission %}submitted{% endif %}">
+        <h2 class="section-title-lg">
+          {% if submission %}✅ 제출 완료{% else %}⏳ 미제출{% endif %}
         </h2>
 
         {% if submission %}
-        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
-          <p style="margin-bottom: 10px;">
+        <div class="submission-info-box">
+          <p class="sub-info-row">
             <strong>제출 시간:</strong> {{ submission.submitted_at|date:"Y-m-d H:i" }}
             {% if submission.is_late %}
-            <span style="color: #dc3545; margin-left: 10px;">⏰ 지각 제출</span>
+            <span class="badge-late">⏰ 지각 제출</span>
             {% endif %}
           </p>
 
           {% if submission.file %}
-          <p style="margin-bottom: 10px;">
+          <p class="sub-info-row">
             <strong>제출 파일:</strong>
-            <a href="{{ submission.file.url }}" target="_blank" style="color:#0d6efd;">
+            <a href="{{ submission.file.url }}" target="_blank" class="file-link">
               {{ submission.file.name|slice:"20" }}
             </a>
           </p>
           {% endif %}
 
           {% if submission.score %}
-          <p style="margin-bottom: 10px;">
+          <p class="sub-info-row">
             <strong>점수:</strong>
-            <span style="color: #28a745; font-size: 18px; font-weight: 600;">
-              {{ submission.score }}점
-            </span>
+            <span class="score-text">{{ submission.score }}점</span>
             / {{ assignment.max_score }}점
           </p>
           {% endif %}
 
           {% if submission.feedback %}
-          <div style="margin-top: 15px; padding: 15px; background-color: #fff; border-left: 4px solid #0d6efd;">
+          <div class="feedback-box">
             <strong>강사 피드백:</strong>
-            <p style="margin-top: 10px; white-space: pre-wrap;">{{ submission.feedback }}</p>
+            <p class="feedback-content">{{ submission.feedback }}</p>
           </div>
           {% endif %}
         </div>
 
         {% if request.user != assignment.course.instructor and request.user.role != 'manager' %}
-        <a href="{% url 'classroom:submit_assignment' assignment.assignment_id %}" style="display: inline-block; padding: 10px 20px; background-color: #0d6efd; color: white; text-decoration: none; border-radius: 5px;">
+        <a href="{% url 'classroom:submit_assignment' assignment.assignment_id %}" class="btn-resubmit">
           📝 재제출하기
         </a>
         {% endif %}
+
         {% else %}
-        <p style="color: #6c757d; margin-bottom: 15px;">아직 과제를 제출하지 않았습니다.</p>
+        <p class="no-submit-msg">아직 과제를 제출하지 않았습니다.</p>
         {% if request.user != assignment.course.instructor and request.user.role != 'manager' %}
-        <a href="{% url 'classroom:submit_assignment' assignment.assignment_id %}" style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px;">
+        <a href="{% url 'classroom:submit_assignment' assignment.assignment_id %}" class="btn-submit">
           📤 과제 제출하기
         </a>
         {% endif %}
         {% endif %}
       </section>
 
-      <div style="padding-top: 20px; border-top: 1px solid #dee2e6; display:flex; justify-content:space-between; align-items:center;">
-        <a href="{% url 'classroom:my_course_detail' assignment.course.course_id %}"
-           style="display: inline-block; padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px;">
+      <div class="detail-footer">
+        <a href="{% url 'classroom:my_course_detail' assignment.course.course_id %}" class="btn-list">
           ← 강의실로
         </a>
 
         {% if request.user == assignment.course.instructor or request.user.role == 'manager' %}
-        <div style="display:flex; gap:8px;">
-          <a href="{% url 'classroom:assignment_update' assignment.assignment_id %}"
-             style="padding:8px 14px; background:#0d6efd; color:white; text-decoration:none; border-radius:5px; font-size:13px;">
+        <div class="admin-actions">
+          <a href="{% url 'classroom:assignment_update' assignment.assignment_id %}" class="btn-mini-edit">
             ✏️ 과제 수정
           </a>
-          <a href="{% url 'classroom:assignment_delete' assignment.assignment_id %}"
-             style="padding:8px 14px; background:#dc3545; color:white; text-decoration:none; border-radius:5px; font-size:13px;">
+          <a href="{% url 'classroom:assignment_delete' assignment.assignment_id %}" class="btn-mini-delete">
             🗑 과제 삭제
           </a>
         </div>

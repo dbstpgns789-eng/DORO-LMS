@@ -1,0 +1,33 @@
+/* static/css/course_delete.css */
+
+.delete-container {
+  max-width: 600px; margin: 100px auto; padding: 40px;
+  background: white; border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;
+}
+
+.delete-icon { font-size: 64px; margin-bottom: 20px; }
+
+.delete-title {
+  font-size: 24px; font-weight: 600; margin-bottom: 10px; color: #dc3545;
+}
+
+.course-name {
+  font-size: 18px; color: #333; margin-bottom: 30px;
+  padding: 15px; background-color: #f8f9fa; border-radius: 5px;
+}
+
+.warning-text { color: #666; margin-bottom: 30px; line-height: 1.6; }
+
+.btn-confirm {
+  padding: 12px 30px; background-color: #dc3545; color: white;
+  border: none; border-radius: 5px; font-size: 16px; font-weight: 600;
+  cursor: pointer; margin-right: 10px;
+}
+.btn-confirm:hover { background-color: #bb2d3b; }
+
+.btn-cancel {
+  padding: 12px 30px; background-color: #6c757d; color: white;
+  text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: 600;
+}
+.btn-cancel:hover { background-color: #5a6268; }

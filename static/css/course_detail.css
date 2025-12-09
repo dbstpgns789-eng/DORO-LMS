@@ -1,0 +1,56 @@
+/* static/css/course_detail.css */
+
+.course-detail {
+  max-width: 1000px; margin: 50px auto; padding: 30px;
+  background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.course-header { margin-bottom: 30px; }
+.course-title { font-size: 32px; font-weight: 700; margin-bottom: 15px; color: #212529; }
+.course-meta { display: flex; gap: 20px; color: #666; font-size: 14px; margin-bottom: 20px; }
+
+.course-info-box {
+  background-color: #f8f9fa; padding: 25px; border-radius: 8px; margin-bottom: 30px;
+}
+.info-row {
+  display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e0e0e0;
+}
+.info-row:last-child { border-bottom: none; }
+.info-label { font-weight: 600; color: #333; }
+.info-value { color: #666; }
+
+.course-image-wrap { margin-bottom: 30px; }
+.course-image { width: 100%; max-width: 600px; border-radius: 8px; }
+
+.course-description { line-height: 1.8; margin-bottom: 30px; }
+.desc-title { margin-bottom: 15px; font-size: 20px; font-weight: 600; }
+.desc-text { font-size: 16px; line-height: 1.8; color: #333; }
+
+/* 관리 버튼 */
+.admin-buttons {
+  display: flex; gap: 10px; margin-bottom: 20px; padding: 15px;
+  background-color: #fff3cd; border-radius: 8px; align-items: center;
+}
+.admin-label { flex: 1; font-weight: 600; color: #856404; }
+
+.btn-edit {
+  padding: 10px 20px; background-color: #0d6efd; color: white;
+  text-decoration: none; border-radius: 5px; font-weight: 600;
+}
+.btn-edit:hover { background-color: #0b5ed7; }
+
+.btn-delete {
+  padding: 10px 20px; background-color: #dc3545; color: white;
+  text-decoration: none; border-radius: 5px; font-weight: 600;
+}
+.btn-delete:hover { background-color: #bb2d3b; }
+
+/* 수강 신청 버튼 */
+.btn-enroll {
+  display: inline-block; padding: 15px 40px; background-color: #4285F4;
+  color: white; text-decoration: none; border-radius: 5px;
+  font-weight: 600; font-size: 16px;
+}
+.btn-enroll:hover { background-color: #3367D6; }
+.btn-enrolled { background-color: #28a745; }
+.btn-disabled { background-color: #6c757d; cursor: not-allowed; }

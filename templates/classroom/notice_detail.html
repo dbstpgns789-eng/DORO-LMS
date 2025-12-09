@@ -4,165 +4,18 @@
 {% block title %}{{ notice.title }} | 공지사항{% endblock %}
 
 {% block extra_css %}
-<style>
-  .notice-detail-container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 20px;
-  }
-
-  .back-link {
-    display: inline-block;
-    margin-bottom: 20px;
-    color: #4650D5;
-    text-decoration: none;
-    font-size: 14px;
-  }
-
-  .back-link:hover {
-    text-decoration: underline;
-  }
-
-  .notice-box {
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .notice-header {
-    padding: 30px;
-    border-bottom: 2px solid #4650D5;
-  }
-
-  .notice-badges {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 15px;
-  }
-
-  .badge-pinned {
-    display: inline-block;
-    padding: 4px 10px;
-    background-color: #dc3545;
-    color: white;
-    font-size: 12px;
-    border-radius: 4px;
-    font-weight: 600;
-  }
-
-  .badge-course {
-    display: inline-block;
-    padding: 4px 10px;
-    background-color: #4650D5;
-    color: white;
-    font-size: 12px;
-    border-radius: 4px;
-  }
-
-  .notice-title-text {
-    font-size: 26px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 15px;
-    line-height: 1.4;
-  }
-
-  .notice-meta {
-    display: flex;
-    gap: 20px;
-    font-size: 14px;
-    color: #666;
-  }
-
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .notice-body {
-    padding: 30px;
-  }
-
-  .notice-content {
-    font-size: 15px;
-    line-height: 1.8;
-    color: #333;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-
-  .notice-footer {
-    padding: 20px 30px;
-    background-color: #f8f9fa;
-    border-top: 1px solid #e0e0e0;
-  }
-
-  .btn-group {
-    display: flex;
-    gap: 10px;
-    justify-content: space-between;
-  }
-
-  .btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.2s;
-  }
-
-  .btn-back {
-    background-color: #6c757d;
-    color: white;
-  }
-
-  .btn-back:hover {
-    background-color: #5a6268;
-  }
-
-  .btn-edit {
-    background-color: #ffc107;
-    color: white;
-  }
-
-  .btn-edit:hover {
-    background-color: #e0a800;
-  }
-
-  .btn-delete {
-    background-color: #dc3545;
-    color: white;
-  }
-
-  .btn-delete:hover {
-    background-color: #c82333;
-  }
-
-  .admin-actions {
-    display: flex;
-    gap: 10px;
-  }
-</style>
+  <link rel="stylesheet" href="{% static 'css/notice_detail.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="notice-detail-container">
 
-  <!-- 뒤로 가기 -->
   <a href="{% url 'classroom:my_course_detail' course.course_id %}" class="back-link">
     ← 강의실로 돌아가기
   </a>
 
-  <!-- 공지 상세 -->
   <div class="notice-box">
 
-    <!-- 헤더 -->
     <div class="notice-header">
       <div class="notice-badges">
         {% if notice.is_pinned %}
@@ -191,19 +44,16 @@
       </div>
     </div>
 
-    <!-- 본문 -->
     <div class="notice-body">
       <div class="notice-content">{{ notice.content }}</div>
     </div>
 
-    <!-- 푸터 (버튼) -->
     <div class="notice-footer">
       <div class="btn-group">
         <a href="{% url 'classroom:my_course_detail' course.course_id %}" class="btn btn-back">
           ← 목록으로
         </a>
 
-        <!-- 강사만 수정/삭제 버튼 -->
         {% if request.user == course.instructor or request.user.role == 'manager' %}
         <div class="admin-actions">
           <a href="{% url 'classroom:notice_update' notice.notice_id %}" class="btn btn-edit">

@@ -3,6 +3,10 @@
 
 {% block title %}과제 삭제 | DORO LMS{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/assignment_delete.css' %}">
+{% endblock %}
+
 {% block content %}
 <section class="hero">
   <div class="hero-inner">
@@ -12,36 +16,26 @@
 
 <main class="card-wrap">
   <div class="card-inner">
-    <div style="max-width: 600px; margin: 0 auto; text-align: center; padding: 40px 20px;">
+    <div class="delete-wrap">
 
-      <div style="font-size: 64px; margin-bottom: 20px;">⚠️</div>
+      <div class="delete-icon">⚠️</div>
 
-      <h2 style="margin-bottom: 20px; color: #dc3545; font-size: 24px;">
-        정말 삭제하시겠습니까?
-      </h2>
+      <h2 class="delete-title">정말 삭제하시겠습니까?</h2>
 
-      <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-        <p style="font-size: 18px; font-weight: 600; color: #212529; margin-bottom: 10px;">
-          {{ assignment.title }}
-        </p>
-        <p style="color: #6c757d; font-size: 14px;">
-          강의: {{ course.title }}
-        </p>
+      <div class="delete-target-box">
+        <p class="target-title">{{ assignment.title }}</p>
+        <p class="target-sub">강의: {{ course.title }}</p>
       </div>
 
-      <p style="color: #dc3545; margin-bottom: 30px; font-weight: 500;">
+      <p class="delete-warning">
         삭제된 과제와 모든 제출물은 복구할 수 없습니다.
       </p>
 
       <form method="post" style="display: inline;">
         {% csrf_token %}
-        <div style="display: flex; gap: 10px; justify-content: center;">
-          <a href="{% url 'classroom:my_course_detail' course.course_id %}" style="display: inline-block; padding: 12px 24px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px; font-weight: 500;">
-            취소
-          </a>
-          <button type="submit" style="padding: 12px 24px; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: 500;">
-            삭제
-          </button>
+        <div class="delete-actions">
+          <a href="{% url 'classroom:my_course_detail' course.course_id %}" class="btn-cancel">취소</a>
+          <button type="submit" class="btn-delete">삭제</button>
         </div>
       </form>
     </div>

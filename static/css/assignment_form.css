@@ -1,0 +1,58 @@
+/* static/css/assignment_form.css */
+
+.asg-form-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+.asg-header { margin-bottom: 25px; }
+.asg-header-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.asg-header-sub { font-size: 14px; color: #6c757d; }
+
+.asg-card {
+  background: #ffffff; border: 1px solid #e0e0e0;
+  border-radius: 10px; padding: 28px 26px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+}
+
+.asg-form-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.asg-col-6 { flex: 1 1 220px; }
+.asg-form-group { margin-bottom: 18px; }
+
+.asg-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #343a40; }
+.asg-label .req { color: #dc3545; margin-left: 3px; }
+
+.asg-control {
+  width: 100%; padding: 9px 11px;
+  border: 1px solid #ced4da; border-radius: 6px;
+  font-size: 14px; box-sizing: border-box;
+}
+textarea.asg-control { min-height: 150px; resize: vertical; }
+
+.asg-help { font-size: 12px; color: #868e96; margin-top: 4px; }
+.asg-error { font-size: 12px; color: #dc3545; margin-top: 4px; }
+
+/* 첨부파일 미리보기 (인라인 스타일 분리) */
+.asg-file-preview {
+  padding: 10px; border-radius: 6px;
+  border: 1px solid #dee2e6; background: #f8f9fa;
+}
+.asg-file-link { color: #0d6efd; text-decoration: none; }
+.asg-file-link:hover { text-decoration: underline; }
+
+.asg-actions {
+  display: flex; justify-content: flex-end; gap: 10px;
+  margin-top: 20px; padding-top: 16px;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn-primary {
+  padding: 10px 22px; border-radius: 6px; border: none;
+  background-color: #4650D5; color: #fff;
+  font-size: 14px; font-weight: 500; cursor: pointer;
+}
+.btn-primary:hover { background-color: #3640C5; }
+
+.btn-secondary {
+  padding: 10px 22px; border-radius: 6px; border: none;
+  background-color: #6c757d; color: #fff;
+  font-size: 14px; font-weight: 500; cursor: pointer;
+  text-decoration: none; display: inline-block;
+}
+.btn-secondary:hover { background-color: #5a6268; }

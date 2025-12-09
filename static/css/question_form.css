@@ -1,0 +1,38 @@
+/* static/css/question_form.css */
+
+.question-form-container { max-width: 900px; margin: 40px auto; padding: 20px; }
+
+.form-header { margin-bottom: 30px; }
+.form-header h2 { font-size: 24px; font-weight: 600; margin-bottom: 10px; }
+.course-info { color: #666; font-size: 14px; }
+
+.form-box {
+  background: white; border: 1px solid #e0e0e0;
+  border-radius: 8px; padding: 30px;
+}
+
+.form-group { margin-bottom: 25px; }
+.form-label {
+  display: block; margin-bottom: 8px; font-weight: 600;
+  font-size: 14px; color: #333;
+}
+.error-msg { color: #dc3545; font-size: 13px; margin-top: 5px; }
+
+.form-control {
+  width: 100%; padding: 12px; border: 1px solid #ddd;
+  border-radius: 5px; font-size: 14px; font-family: inherit;
+  transition: border-color 0.2s; box-sizing: border-box;
+}
+.form-control:focus { outline: none; border-color: #4650D5; }
+textarea.form-control { resize: vertical; min-height: 200px; }
+
+.form-actions { display: flex; gap: 10px; margin-top: 30px; }
+.btn {
+  padding: 12px 24px; border: none; border-radius: 5px; font-size: 14px;
+  font-weight: 500; cursor: pointer; text-decoration: none;
+  display: inline-block; transition: all 0.2s;
+}
+.btn-primary { background-color: #4650D5; color: white; }
+.btn-primary:hover { background-color: #3640C5; }
+.btn-secondary { background-color: #6c757d; color: white; }
+.btn-secondary:hover { background-color: #5a6268; }

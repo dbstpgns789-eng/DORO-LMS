@@ -4,138 +4,7 @@
 {% block title %}{{ course.title }} | DORO LMS{% endblock %}
 
 {% block extra_css %}
-<style>
-  .course-detail {
-    max-width: 1000px;
-    margin: 50px auto;
-    padding: 30px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
-
-  /* 알림창 스타일 */
-  .alert {
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    white-space: pre-line;
-  }
-  .alert-danger { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
-  .alert-success { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
-
-  .course-header {
-    margin-bottom: 30px;
-  }
-
-  .course-title {
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 15px;
-    color: #212529;
-  }
-
-  .course-meta {
-    display: flex;
-    gap: 20px;
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-
-  .course-info-box {
-    background-color: #f8f9fa;
-    padding: 25px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-  }
-
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #e0e0e0;
-  }
-
-  .info-row:last-child {
-    border-bottom: none;
-  }
-
-  .info-label {
-    font-weight: 600;
-    color: #333;
-  }
-
-  .info-value {
-    color: #666;
-  }
-
-  .course-description {
-    line-height: 1.8;
-    margin-bottom: 30px;
-  }
-
-  /* 👇 관리 버튼 스타일 */
-  .admin-buttons {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: #fff3cd;
-    border-radius: 8px;
-    align-items: center;
-  }
-
-  .btn-edit {
-    padding: 10px 20px;
-    background-color: #0d6efd;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: 600;
-  }
-
-  .btn-edit:hover {
-    background-color: #0b5ed7;
-  }
-
-  .btn-delete {
-    padding: 10px 20px;
-    background-color: #dc3545;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: 600;
-  }
-
-  .btn-delete:hover {
-    background-color: #bb2d3b;
-  }
-
-  .btn-enroll {
-    display: inline-block;
-    padding: 15px 40px;
-    background-color: #4285F4;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: 600;
-    font-size: 16px;
-  }
-
-  .btn-enroll:hover {
-    background-color: #3367D6;
-  }
-
-  .btn-enrolled {
-    background-color: #28a745;
-  }
-
-  .btn-disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-  }
-</style>
+  <link rel="stylesheet" href="{% static 'css/course_detail.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -144,7 +13,7 @@
   {% if user.is_authenticated %}
     {% if user.role == "manager" %}
     <div class="admin-buttons">
-      <span style="flex: 1; font-weight: 600; color: #856404;">📝 강의 관리</span>
+      <span class="admin-label">📝 강의 관리</span>
 
       <a href="{% url 'course:course_update' course.course_id %}" class="btn-edit">✏️ 수정</a>
 
@@ -191,14 +60,14 @@
   </div>
 
   {% if course.image %}
-  <div style="margin-bottom: 30px;">
-    <img src="{{ course.image.url }}" alt="{{ course.title }}" style="width: 100%; max-width: 600px; border-radius: 8px;">
+  <div class="course-image-wrap">
+    <img src="{{ course.image.url }}" alt="{{ course.title }}" class="course-image">
   </div>
   {% endif %}
 
   <div class="course-description">
-    <h3 style="margin-bottom: 15px; font-size: 20px; font-weight: 600;">📝 강의 설명</h3>
-    <p style="font-size: 16px; line-height: 1.8; color: #333;">{{ course.description }}</p>
+    <h3 class="desc-title">📝 강의 설명</h3>
+    <p class="desc-text">{{ course.description }}</p>
   </div>
 
   {% if user.is_authenticated %}

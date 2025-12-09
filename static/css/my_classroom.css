@@ -1,8 +1,7 @@
-/* static/css/course_list.css */
+/* static/css/my_classroom.css */
+/* (course_list와 거의 동일하지만 독립 파일) */
 
 .classroom-container { display: flex; min-height: calc(100vh - 200px); max-width: 1400px; margin: 0 auto; padding: 20px; gap: 20px; }
-
-/* 사이드바 (공통 스타일과 유사) */
 .sidebar { width: 250px; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; height: fit-content; }
 .sidebar-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #4650D5; }
 .sidebar-header h2 { font-size: 18px; font-weight: 600; margin: 0; }
@@ -13,8 +12,10 @@
 .sidebar-menu a.active { background-color: #4650D5; color: white; font-weight: 600; }
 
 .main-content { flex: 1; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px; }
+.content-header { margin-bottom: 30px; }
+.content-header h1 { font-size: 24px; font-weight: 600; margin: 0 0 10px 0; }
+.content-header p { color: #666; margin: 0; }
 
-/* 테이블 */
 .course-table { width: 100%; border-collapse: collapse; border: 1px solid #e0e0e0; }
 .course-table thead { background-color: #FF69B4; }
 .course-table th { padding: 15px; text-align: center; color: white; font-weight: 600; border: 1px solid #FF1493; }
@@ -23,9 +24,18 @@
 .course-table td { padding: 15px; text-align: center; border: 1px solid #e0e0e0; }
 
 .course-tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; color: white; }
-
 .btn-enter { padding: 6px 16px; background-color: #4650D5; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; font-size: 13px; }
 .btn-enter:hover { background-color: #3640C5; }
 .btn-cancel { padding: 6px 16px; background-color: #999; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; font-size: 13px; margin-left: 5px; }
+.btn-cancel:hover { background-color: #777; }
 
-.empty-state-large { text-align: center; padding: 60px 20px; }
+.empty-state { text-align: center; padding: 60px 20px; color: #999; }
+.empty-state p { font-size: 16px; margin-bottom: 20px; }
+
+/* 대기 중인 과제 알림 */
+.pending-alert { margin-top: 30px; padding: 20px; background-color: #FFF3CD; border-radius: 8px; border: 1px solid #FFE69C; }
+.pending-title { margin: 0 0 15px 0; font-size: 16px; color: #856404; }
+.pending-list { list-style: none; padding: 0; margin: 0; }
+.pending-item { padding: 10px 0; border-bottom: 1px solid #FFE69C; }
+.pending-link { text-decoration: none; color: #333; }
+.pending-deadline { color: #dc3545; font-size: 14px; margin-left: 10px; }

@@ -1,0 +1,29 @@
+/* static/css/submission_list.css */
+
+.list-container { max-width: 1000px; margin: 40px auto; padding: 20px; }
+.back-link { text-decoration: none; color: #4650D5; font-size: 14px; }
+.back-link:hover { text-decoration: underline; }
+
+.list-title { margin: 20px 0 10px; font-size: 24px; font-weight: 700; }
+.list-sub { color: #666; margin-bottom: 20px; }
+
+/* 테이블 스타일 */
+.sub-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.sub-table thead tr { background: #f8f9fa; border-bottom: 1px solid #dee2e6; }
+.sub-table th { padding: 12px 10px; text-align: left; font-weight: 600; color: #495057; }
+.sub-table tbody tr { border-bottom: 1px solid #eee; }
+.sub-table td { padding: 12px 10px; vertical-align: middle; }
+
+.file-link { text-decoration: none; color: #0d6efd; }
+.file-link:hover { text-decoration: underline; }
+
+.btn-feedback {
+  display: inline-block; padding: 6px 12px; background: #0d6efd;
+  color: white; border-radius: 4px; text-decoration: none; font-size: 12px;
+}
+.btn-feedback:hover { background: #0b5ed7; }
+
+.empty-list {
+  padding: 50px; text-align: center; background: #f8f9fa;
+  border-radius: 8px; color: #777;
+}

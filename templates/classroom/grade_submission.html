@@ -3,6 +3,10 @@
 
 {% block title %}과제 채점 | DORO LMS{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/grade_submission.css' %}">
+{% endblock %}
+
 {% block content %}
 <section class="hero">
   <div class="hero-inner">
@@ -12,79 +16,68 @@
 </section>
 
 <main class="card-wrap">
-  <div class="card-inner">
+  <div class="card-inner grade-container">
 
-    <div style="max-width: 900px; margin: 0 auto;">
-
-      <!-- 학생 정보 -->
-      <section style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+      <section class="student-info-box">
+        <div class="student-header">
           <div>
-            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">{{ submission.student.name }}</h3>
-            <div style="display: flex; gap: 20px; font-size: 14px; color: #6c757d;">
+            <h3 class="student-name">{{ submission.student.name }}</h3>
+            <div class="student-meta">
               <span>📧 {{ submission.student.email }}</span>
               <span>📅 제출: {{ submission.submitted_at|date:"Y-m-d H:i" }}</span>
               {% if submission.is_late %}
-              <span style="color: #dc3545; font-weight: 600;">⏰ 지각 제출</span>
+              <span class="badge-late">⏰ 지각 제출</span>
               {% endif %}
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 제출 내용 -->
-      <section style="margin-bottom: 30px;">
-        <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 15px;">📝 제출 내용</h2>
-        <div style="padding: 20px; background-color: #fff; border: 1px solid #dee2e6; border-radius: 8px; white-space: pre-wrap; line-height: 1.8;">
-          {{ submission.content }}
-        </div>
+      <section class="submission-section">
+        <h2 class="section-title">📝 제출 내용</h2>
+        <div class="submission-content">{{ submission.content }}</div>
 
         {% if submission.file %}
-        <div style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+        <div class="file-attachment">
           <strong>첨부 파일:</strong>
-          <a href="{{ submission.file.url }}" target="_blank" style="color: #0d6efd; margin-left: 10px;">
+          <a href="{{ submission.file.url }}" target="_blank" class="file-link">
             📎 {{ submission.file.name }}
           </a>
         </div>
         {% endif %}
       </section>
 
-      <!-- 채점 폼 -->
-      <section style="border: 2px solid #0d6efd; border-radius: 8px; padding: 20px;">
-        <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 20px;">✏️ 채점하기</h2>
+      <section class="grade-form-box">
+        <h2 class="grade-form-title">✏️ 채점하기</h2>
 
         <form method="post">
           {% csrf_token %}
 
-          <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600;">
+          <div class="form-group">
+            <label class="form-label">
               점수 (배점: {{ submission.assignment.max_score }}점)
             </label>
             <input type="number" name="score" min="0" max="{{ submission.assignment.max_score }}"
                    value="{% if submission.score %}{{ submission.score }}{% endif %}"
-                   style="width: 200px; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; font-size: 16px;"
-                   required>
+                   class="input-score" required>
           </div>
 
-          <div style="margin-bottom: 30px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600;">피드백</label>
-            <textarea name="feedback" rows="8"
-                      style="width: 100%; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; font-size: 14px; resize: vertical;"
+          <div class="form-group">
+            <label class="form-label">피드백</label>
+            <textarea name="feedback" rows="8" class="textarea-feedback"
                       placeholder="학생에게 전달할 피드백을 작성하세요">{% if submission.feedback %}{{ submission.feedback }}{% endif %}</textarea>
           </div>
 
-          <div style="display: flex; gap: 10px; justify-content: flex-end;">
-            <a href="{% url 'classroom:submission_list' submission.assignment.assignment_id %}" style="display: inline-block; padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px;">
+          <div class="form-actions">
+            <a href="{% url 'classroom:submission_list' submission.assignment.assignment_id %}" class="btn-cancel">
               취소
             </a>
-            <button type="submit" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: 500;">
+            <button type="submit" class="btn-submit">
               채점 완료
             </button>
           </div>
         </form>
       </section>
-
-    </div>
 
   </div>
 </main>

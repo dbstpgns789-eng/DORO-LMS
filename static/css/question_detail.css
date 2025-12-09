@@ -1,0 +1,66 @@
+/* static/css/question_detail.css */
+
+.q-detail-container { max-width: 900px; margin: 40px auto; padding: 20px; }
+.back-link {
+  display: inline-block; margin-bottom: 20px; color: #4650D5; text-decoration: none;
+}
+.back-link:hover { text-decoration: underline; }
+
+/* 질문 박스 */
+.q-box {
+  background: white; border: 1px solid #e0e0e0;
+  border-radius: 8px; padding: 30px; margin-bottom: 30px;
+}
+.q-header {
+  display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;
+}
+.q-title { margin: 0; font-size: 24px; font-weight: 600; }
+.btn-status {
+  padding: 6px 12px; color: white; text-decoration: none;
+  border-radius: 4px; font-size: 13px;
+}
+.btn-status.resolved { background-color: #6c757d; } /* 미해결로 변경 */
+.btn-status.unresolved { background-color: #28a745; } /* 해결됨 표시 */
+
+.q-meta {
+  display: flex; gap: 15px; font-size: 14px; color: #666;
+  margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;
+}
+.badge-resolved { color: #28a745; font-weight: 600; }
+.q-content { line-height: 1.6; white-space: pre-wrap; color: #333; }
+
+/* 답변 섹션 */
+.answer-section-title { margin-bottom: 20px; font-size: 20px; font-weight: 600; }
+
+.answer-item {
+  border-radius: 4px; padding: 20px; margin-bottom: 15px;
+}
+.answer-item.normal {
+  background: #f8f9fa; border-left: 4px solid #dee2e6;
+}
+.answer-item.instructor {
+  background: #fff8e1; border-left: 4px solid #ffc107;
+}
+
+.answer-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.answer-author { font-weight: 600; color: #333; }
+.instructor-badge { color: #4650D5; font-size: 13px; margin-left: 5px; font-weight: bold; }
+.answer-date { font-size: 13px; color: #666; }
+.answer-content { line-height: 1.6; white-space: pre-wrap; color: #333; }
+
+.empty-answers { text-align: center; color: #999; padding: 40px; }
+
+/* 답변 작성 폼 */
+.answer-form-box {
+  background: white; border: 1px solid #e0e0e0; border-radius: 8px;
+  padding: 20px; margin-top: 30px;
+}
+.answer-form-title { margin-bottom: 15px; font-size: 18px; font-weight: 600; }
+.form-control {
+  width: 100%; padding: 10px; border: 1px solid #ddd;
+  border-radius: 5px; font-size: 14px; box-sizing: border-box; resize: vertical;
+}
+.btn-submit {
+  margin-top: 10px; padding: 10px 20px; background-color: #4650D5;
+  color: white; border: none; border-radius: 5px; cursor: pointer;
+}

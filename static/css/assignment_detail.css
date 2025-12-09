@@ -1,0 +1,95 @@
+/* static/css/assignment_detail.css */
+
+.detail-wrap { padding-top: 60px; padding-bottom: 60px; }
+.detail-inner { max-width: 900px; margin: 0 auto; }
+
+/* 헤더 영역 */
+.asg-title-section { margin-bottom: 30px; }
+.asg-title {
+  font-size: 32px; font-weight: 700; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+}
+.asg-course-name { font-size: 16px; color: #666; font-weight: 500; }
+
+/* 메타 정보 박스 */
+.asg-meta-box {
+  background-color: #f8f9fa; padding: 20px;
+  border-radius: 8px; margin-bottom: 30px;
+}
+.asg-meta-grid { display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px; }
+.meta-label { color: #6c757d; margin-right: 4px; }
+.meta-value { color: #212529; font-weight: bold; }
+.meta-value.overdue { color: #dc3545; }
+.badge-overdue { color: #dc3545; font-weight: 600; margin-left: 10px; }
+
+/* 공통 섹션 스타일 */
+.detail-section { margin-bottom: 30px; }
+.section-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+.section-title-lg { font-size: 20px; font-weight: 600; margin-bottom: 15px; }
+
+/* 첨부파일 */
+.file-box {
+  padding: 15px; border-radius: 8px;
+  border: 1px solid #dee2e6; background: #f8f9fa;
+}
+.file-link { color: #0d6efd; text-decoration: none; }
+.file-link:hover { text-decoration: underline; }
+
+/* 본문 내용 */
+.content-box {
+  line-height: 1.8; white-space: pre-wrap; padding: 20px;
+  background-color: #fff; border: 1px solid #dee2e6; border-radius: 8px;
+  margin-bottom: 40px; /* 섹션 간격 */
+}
+
+/* 제출 상태 영역 */
+.submission-status-card {
+  border: 2px solid #ffc107; /* 기본 미제출 색상 */
+  border-radius: 8px; padding: 20px; margin-bottom: 30px;
+}
+.submission-status-card.submitted { border-color: #28a745; } /* 제출 완료 시 */
+
+.submission-info-box {
+  background-color: #f8f9fa; padding: 15px;
+  border-radius: 5px; margin-bottom: 15px;
+}
+.sub-info-row { margin-bottom: 10px; }
+.badge-late { color: #dc3545; margin-left: 10px; }
+.score-text { color: #28a745; font-size: 18px; font-weight: 600; }
+
+/* 피드백 */
+.feedback-box {
+  margin-top: 15px; padding: 15px;
+  background-color: #fff; border-left: 4px solid #0d6efd;
+}
+.feedback-content { margin-top: 10px; white-space: pre-wrap; }
+
+/* 버튼 */
+.btn-submit {
+  display: inline-block; padding: 10px 20px; background-color: #28a745;
+  color: white; text-decoration: none; border-radius: 5px;
+}
+.btn-resubmit {
+  display: inline-block; padding: 10px 20px; background-color: #0d6efd;
+  color: white; text-decoration: none; border-radius: 5px;
+}
+.no-submit-msg { color: #6c757d; margin-bottom: 15px; }
+
+/* 하단 푸터 */
+.detail-footer {
+  padding-top: 20px; border-top: 1px solid #dee2e6;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.btn-list {
+  display: inline-block; padding: 10px 20px; background-color: #6c757d;
+  color: white; text-decoration: none; border-radius: 5px;
+}
+.admin-actions { display: flex; gap: 8px; }
+.btn-mini-edit {
+  padding: 8px 14px; background: #0d6efd; color: white;
+  text-decoration: none; border-radius: 5px; font-size: 13px;
+}
+.btn-mini-delete {
+  padding: 8px 14px; background: #dc3545; color: white;
+  text-decoration: none; border-radius: 5px; font-size: 13px;
+}

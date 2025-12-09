@@ -1,0 +1,35 @@
+/* static/css/grade_submission.css */
+
+.grade-container { max-width: 900px; margin: 0 auto; }
+
+/* 학생 정보 */
+.student-info-box {
+  background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;
+}
+.student-header { display: flex; justify-content: space-between; align-items: center; }
+.student-name { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+.student-meta { display: flex; gap: 20px; font-size: 14px; color: #6c757d; }
+.badge-late { color: #dc3545; font-weight: 600; }
+
+/* 제출 내용 */
+.submission-section { margin-bottom: 30px; }
+.section-title { font-size: 20px; font-weight: 600; margin-bottom: 15px; }
+.submission-content {
+  padding: 20px; background-color: #fff; border: 1px solid #dee2e6;
+  border-radius: 8px; white-space: pre-wrap; line-height: 1.8;
+}
+.file-attachment { margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; }
+.file-link { color: #0d6efd; margin-left: 10px; text-decoration: none; }
+.file-link:hover { text-decoration: underline; }
+
+/* 채점 폼 */
+.grade-form-box { border: 2px solid #0d6efd; border-radius: 8px; padding: 20px; }
+.grade-form-title { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; margin-bottom: 8px; font-weight: 600; }
+.input-score { width: 200px; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; font-size: 16px; }
+.textarea-feedback { width: 100%; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; font-size: 14px; resize: vertical; }
+
+.form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-cancel { display: inline-block; padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px; }
+.btn-submit { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: 500; }

@@ -3,56 +3,59 @@
 
 {% block title %}제출 목록 | {{ assignment.title }}{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/submission_list.css' %}">
+{% endblock %}
+
 {% block content %}
-<div style="max-width: 1000px; margin: 40px auto; padding: 20px;">
-  <a href="{% url 'classroom:my_course_detail' course.course_id %}" style="text-decoration:none; color:#4650D5;">
+<div class="list-container">
+  <a href="{% url 'classroom:my_course_detail' course.course_id %}" class="back-link">
     ← 강의실로
   </a>
 
-  <h2 style="margin: 20px 0 10px;">📤 제출 목록 - {{ assignment.title }}</h2>
-  <p style="color:#666; margin-bottom:20px;">📚 {{ course.title }}</p>
+  <h2 class="list-title">📤 제출 목록 - {{ assignment.title }}</h2>
+  <p class="list-sub">📚 {{ course.title }}</p>
 
   {% if submissions %}
-  <table style="width:100%; border-collapse:collapse; font-size:14px;">
+  <table class="sub-table">
     <thead>
-      <tr style="background:#f8f9fa; border-bottom:1px solid #dee2e6;">
-        <th style="padding:10px; text-align:left;">학생</th>
-        <th style="padding:10px; text-align:left;">제출 시간</th>
-        <th style="padding:10px; text-align:left;">파일</th>
-        <th style="padding:10px; text-align:left;">점수</th>
-        <th style="padding:10px; text-align:left;">피드백</th>
-        <th style="padding:10px; text-align:left;">관리</th>
+      <tr>
+        <th>학생</th>
+        <th>제출 시간</th>
+        <th>파일</th>
+        <th>점수</th>
+        <th>피드백</th>
+        <th>관리</th>
       </tr>
     </thead>
     <tbody>
       {% for sub in submissions %}
-      <tr style="border-bottom:1px solid #eee;">
-        <td style="padding:10px;">{{ sub.student.name }}</td>
-        <td style="padding:10px;">{{ sub.submitted_at|date:"Y-m-d H:i" }}</td>
-        <td style="padding:10px;">
+      <tr>
+        <td>{{ sub.student.name }}</td>
+        <td>{{ sub.submitted_at|date:"Y-m-d H:i" }}</td>
+        <td>
           {% if sub.file %}
-            <a href="{{ sub.file.url }}" target="_blank">📎 다운로드</a>
+            <a href="{{ sub.file.url }}" target="_blank" class="file-link">📎 다운로드</a>
           {% else %}
             -
           {% endif %}
         </td>
-        <td style="padding:10px;">
+        <td>
           {% if sub.score is not None %}
             {{ sub.score }}
           {% else %}
             -
           {% endif %}
         </td>
-        <td style="padding:10px; max-width:250px;">
+        <td style="max-width: 250px;">
           {% if sub.feedback %}
             {{ sub.feedback|truncatewords:10 }}
           {% else %}
             -
           {% endif %}
         </td>
-        <td style="padding:10px;">
-          <a href="{% url 'classroom:submission_feedback' sub.submission_id %}"
-             style="padding:6px 10px; background:#0d6efd; color:white; border-radius:4px; text-decoration:none; font-size:12px;">
+        <td>
+          <a href="{% url 'classroom:submission_feedback' sub.submission_id %}" class="btn-feedback">
             피드백
           </a>
         </td>
@@ -61,7 +64,7 @@
     </tbody>
   </table>
   {% else %}
-  <div style="padding:50px; text-align:center; background:#f8f9fa; border-radius:8px; color:#777;">
+  <div class="empty-list">
     아직 제출한 학생이 없습니다.
   </div>
   {% endif %}

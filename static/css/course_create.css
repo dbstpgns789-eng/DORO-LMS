@@ -1,0 +1,18 @@
+/* static/css/course_create.css */
+
+.create-form { max-width: 800px; margin: 0 auto; }
+
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; margin-bottom: 8px; font-weight: 600; }
+.error-msg { color: #dc3545; font-size: 14px; margin-top: 5px; }
+
+.checkbox-group { margin-bottom: 30px; }
+.checkbox-label { display: flex; align-items: center; gap: 8px; }
+
+.form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.btn {
+  padding: 10px 20px; border-radius: 5px; cursor: pointer;
+  font-size: 16px; font-weight: 500; text-decoration: none; display: inline-block; border: none;
+}
+.btn-cancel { background-color: #6c757d; color: white; }
+.btn-submit { background-color: #28a745; color: white; }
