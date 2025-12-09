@@ -86,10 +86,37 @@ venv\Scripts\activate
 
 
 ### 4.3 패키지 설치
+
 pip install -r requirements.txt
 
+### 4.4 이메일 인증 사용 방법
+manage.py와 같은 위치에 ngrok.exe 설치
 
-### 4.4 마이그레이션 및 서버 실행
+    ngrok config add-authtoken '본인 토큰'
+    ngrok http 8080 << python manage.py runserver와 동시에 실행 
+
+
+아래 코드에 본인 정보 채워넣기
+
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1',
+        '',  # ngrok 도메인 추가
+    ]
+
+    SITE_DOMAIN = '' # ngrok 도메인 추가
+
+    CSRF_TRUSTED_ORIGINS = [''] # ngrok 도메인 추가
+
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = '' # Gmail 아이디
+    EMAIL_HOST_PASSWORD = ''  # Gmail 앱 비밀번호
+    DEFAULT_FROM_EMAIL = ''
+
+### 4.5 마이그레이션 및 서버 실행
 
 python manage.py migrate
 python manage.py runserver

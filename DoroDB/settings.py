@@ -158,24 +158,25 @@ DEBUG = True
 
 
 
-
+'''
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'uncubical-minerva-unparochially.ngrok-free.dev',  # 👈 ngrok 도메인 추가
+    '',  # ngrok 도메인 추가
 
 ]
-SITE_DOMAIN = 'uncubical-minerva-unparochially.ngrok-free.dev'
+SITE_DOMAIN = ''
 
-CSRF_TRUSTED_ORIGINS = ['https://uncubical-minerva-unparochially.ngrok-free.dev']
+CSRF_TRUSTED_ORIGINS = ['']
 # CSRF 보안 설정
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'ohjun2001@gmail.com'
-EMAIL_HOST_PASSWORD = 'fjmrusxuyugwwqna'  # Gmail 앱 비밀번호
-DEFAULT_FROM_EMAIL = 'ohjun2001@gmail.com'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''  # Gmail 앱 비밀번호
+DEFAULT_FROM_EMAIL = ''
+'''
 
 mimetypes.add_type("application/pdf", ".pdf", True)

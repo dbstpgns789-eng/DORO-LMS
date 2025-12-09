@@ -24,7 +24,7 @@
           <a href="{% url 'course:course_list' %}" style="color: #6c757d; text-decoration: none; font-size: 14px;">더보기 →</a>
 
           {% if request.user.is_authenticated %}
-            {% if request.user.role == "instructor" or request.user.role == "manager" %}
+            {% if request.user.role == "manager" %}
             <a href="{% url 'course:course_create' %}" style="display: inline-block; padding: 6px 14px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; font-size: 14px;">
               ➕ 강의 등록
             </a>
@@ -85,7 +85,7 @@
           <div style="padding: 40px; text-align: center; color: #6c757d;">
             <p>📚 등록된 강의가 없습니다.</p>
             {% if request.user.is_authenticated %}
-              {% if request.user.role == "instructor" or request.user.role == "manager" %}
+              {% if request.user.role == "manager" %}
               <p style="margin-top: 15px;">
                 <a href="{% url 'course:course_create' %}" style="display: inline-block; padding: 8px 16px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px;">
                   첫 강의 등록하기
@@ -105,7 +105,7 @@
           <a href="{% url 'board:notice_list' %}" style="color: #6c757d; text-decoration: none; font-size: 14px;">더보기 →</a>
 
           {% if request.user.is_authenticated %}
-            {% if request.user.role == "instructor" or request.user.role == "manager" %}
+            {% if request.user.role == "manager" %}
             <a href="{% url 'board:notice_create' %}" style="display: inline-block; padding: 6px 14px; background-color: #0d6efd; color: white; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: 500;">
               ✏️ 작성하기
             </a>

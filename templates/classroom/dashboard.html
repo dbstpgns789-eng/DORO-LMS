@@ -335,7 +335,7 @@
       <li><a href="{% url 'course:course_list' %}">🔍 강의 찾기</a></li>
 
       <!-- 👇 강사/관리자만 보이는 메뉴 -->
-      {% if request.user.role == 'instructor' or request.user.role == 'manager' %}
+      {% if request.user.role == 'manager' %}
       <li><a href="{% url 'course:course_create' %}">➕ 강의 등록</a></li>
 
       {% endif %}

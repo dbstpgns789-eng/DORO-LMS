@@ -50,7 +50,7 @@ def course_detail_view(request, course_id):
 @login_required
 def course_create_view(request):
     """강의 등록 (강사/관리자만)"""
-    if request.user.role not in ['instructor', 'manager']:
+    if request.user.role != 'manager':
         messages.error(request, '강사 또는 관리자만 강의를 등록할 수 있습니다.')
         return redirect('index')
 

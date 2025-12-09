@@ -14,7 +14,7 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
 
-  /* 알림창 스타일(alert)은 삭제해도 되지만, 혹시 나중에 쓸 수 있으니 둬도 상관없습니다 */
+  /* 알림창 스타일 */
   .alert {
     padding: 15px;
     margin-bottom: 20px;
@@ -75,7 +75,7 @@
     margin-bottom: 30px;
   }
 
-  /* 👇 관리 버튼 */
+  /* 👇 관리 버튼 스타일 */
   .admin-buttons {
     display: flex;
     gap: 10px;
@@ -83,6 +83,7 @@
     padding: 15px;
     background-color: #fff3cd;
     border-radius: 8px;
+    align-items: center;
   }
 
   .btn-edit {
@@ -141,11 +142,16 @@
 <div class="course-detail">
 
   {% if user.is_authenticated %}
-    {% if user == course.instructor or user.role == "manager" %}
+    {% if user.role == "manager" %}
     <div class="admin-buttons">
       <span style="flex: 1; font-weight: 600; color: #856404;">📝 강의 관리</span>
+
       <a href="{% url 'course:course_update' course.course_id %}" class="btn-edit">✏️ 수정</a>
+
+      {% if user.role == "manager" %}
       <a href="{% url 'course:course_delete' course.course_id %}" class="btn-delete">🗑️ 삭제</a>
+      {% endif %}
+
     </div>
     {% endif %}
   {% endif %}
