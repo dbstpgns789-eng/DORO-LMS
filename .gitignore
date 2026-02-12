@@ -1,21 +1,79 @@
-# 디폴트 무시된 파일
-/shelf/
-/workspace.xml
-# 에디터 기반 HTTP 클라이언트 요청
-/httpRequests/
+# Python
+*.py[cod]
+*$py.class
+__pycache__/
+*.so
+.Python
+*.pyc
 
-# Datasource local storage ignored files
-/dataSources/
-/dataSources.local.xml
-=======
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
 
+# 민감 정보
+.env
+*.env
+secrets.json
+domain.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Media files (업로드된 사용자 파일)
+media/
+
+# Static files (배포 시 수집되는 파일)
+staticfiles/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# PDF 및 실행 파일
 *.pdf
 *.exe
 ngrok.exe
 
-.idea/
-venv/
-__pycache__/
-*.pyc
-db.sqlite3
-media/
+# 임시 파일
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+# 워크스페이스 설정
+/shelf/
+/workspace.xml
+/httpRequests/
+/dataSources/
+/dataSources.local.xml
